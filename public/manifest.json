@@ -1,0 +1,16 @@
+{
+  "name": "BottleZero",
+  "short_name": "BottleZero",
+  "description": "Track bottles saved, find refill stations, and reduce single-use plastic waste.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f7f8f7",
+  "theme_color": "#0e9f6e",
+  "orientation": "portrait",
+  "categories": ["lifestyle", "utilities", "education"],
+  "icons": [
+    { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-512-maskable.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

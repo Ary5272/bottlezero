@@ -1,0 +1,114 @@
+[
+  {
+    "category": "impact",
+    "title": "A Million Bottles a Minute",
+    "text": "The world buys about 1 million plastic bottles every minute, and the number keeps climbing year after year.",
+    "source": "The Guardian",
+    "url": "https://www.theguardian.com/environment/2017/jun/28/a-million-a-minute-worlds-plastic-bottle-binge-as-dangerous-as-climate-change"
+  },
+  {
+    "category": "impact",
+    "title": "Centuries to Break Down",
+    "text": "A single plastic bottle can take roughly 450 years to decompose — long after we're gone, it's still here.",
+    "source": "National Geographic",
+    "url": "https://www.nationalgeographic.com/environment/article/plastic-bottles"
+  },
+  {
+    "category": "impact",
+    "title": "Millions of Tonnes Into the Ocean",
+    "text": "More than 11 million tonnes of plastic enter the ocean every single year, harming marine life and ecosystems.",
+    "source": "UN Environment Programme",
+    "url": "https://www.unep.org/topics/ocean-seas-and-coasts/ecosystem-degradation-pollution/plastic-pollution-marine-litter"
+  },
+  {
+    "category": "impact",
+    "title": "Only ~9% Is Recycled",
+    "text": "Of all the plastic ever produced, only about 9% has been recycled. Most ends up in landfills or the environment.",
+    "source": "UN Environment Programme",
+    "url": "https://www.unep.org/plastic-pollution"
+  },
+  {
+    "category": "impact",
+    "title": "Microplastics in Bottled Water",
+    "text": "Studies found microplastics in 93% of bottled water tested. Tap water in a reusable bottle is often the cleaner choice.",
+    "source": "World Health Organization",
+    "url": "https://www.who.int/news/item/22-08-2019-who-calls-for-more-research-into-microplastics-and-a-crackdown-on-plastic-pollution"
+  },
+  {
+    "category": "impact",
+    "title": "Bottled Water Burns Energy",
+    "text": "Making, filling, and shipping bottled water uses up to 2,000x more energy than producing the same amount of tap water.",
+    "source": "Pacific Institute",
+    "url": "https://pacinst.org/publication/bottled-water-and-energy-a-fact-sheet/"
+  },
+  {
+    "category": "tips",
+    "title": "Always Carry a Reusable Bottle",
+    "text": "Keep a refillable bottle in your bag. A good stainless-steel bottle keeps water cold for hours and lasts for years.",
+    "source": "US EPA — Reducing & Reusing",
+    "url": "https://www.epa.gov/recycle/reducing-and-reusing-basics"
+  },
+  {
+    "category": "tips",
+    "title": "Ask for Tap Water",
+    "text": "Most cafes and restaurants will happily refill your bottle with tap water for free. All you have to do is ask.",
+    "source": "Refill",
+    "url": "https://refill.org.uk/"
+  },
+  {
+    "category": "tips",
+    "title": "Infuse Your Water",
+    "text": "Add sliced fruit, cucumber, or mint to make tap water exciting — tastier and far cheaper than flavored bottled water.",
+    "source": "Earthday.org",
+    "url": "https://www.earthday.org/end-plastic-pollution/"
+  },
+  {
+    "category": "tips",
+    "title": "Filter Instead of Buy",
+    "text": "A simple carbon filter pitcher costs about $25 and can replace hundreds of single-use bottles a year.",
+    "source": "US EPA — Reducing & Reusing",
+    "url": "https://www.epa.gov/recycle/reducing-and-reusing-basics"
+  },
+  {
+    "category": "diy",
+    "title": "Keep Your Bottle Fresh",
+    "text": "Wash reusable bottles daily with warm soapy water, and deep-clean weekly with baking soda and vinegar.",
+    "source": "US EPA — Reducing & Reusing",
+    "url": "https://www.epa.gov/recycle/reducing-and-reusing-basics"
+  },
+  {
+    "category": "diy",
+    "title": "Make It Yours",
+    "text": "Personalize your bottle with stickers or paint pens. You're far more likely to carry something you actually like.",
+    "source": "Earthday.org",
+    "url": "https://www.earthday.org/end-plastic-pollution/"
+  },
+  {
+    "category": "diy",
+    "title": "Refill on the Go",
+    "text": "Map out the fountains and refill stations near your school, gym, and workplace so you're never tempted to buy.",
+    "source": "NOAA Marine Debris Program",
+    "url": "https://marinedebris.noaa.gov/"
+  },
+  {
+    "category": "news",
+    "title": "A Global Plastics Treaty",
+    "text": "Countries around the world are negotiating a landmark UN treaty to end plastic pollution — the first of its kind.",
+    "source": "UN Environment Programme",
+    "url": "https://www.unep.org/plastic-pollution"
+  },
+  {
+    "category": "news",
+    "title": "Single-Use Bans Are Spreading",
+    "text": "Over 100 countries now restrict single-use plastics. Parks, airports, and universities are leading the shift.",
+    "source": "UN Environment Programme",
+    "url": "https://www.unep.org/topics/chemicals-and-pollution-action/plastic-pollution"
+  },
+  {
+    "category": "news",
+    "title": "The Refill Revolution",
+    "text": "Cities are installing free public refill points, preventing millions of single-use bottles from being bought.",
+    "source": "Refill",
+    "url": "https://refill.org.uk/"
+  }
+]

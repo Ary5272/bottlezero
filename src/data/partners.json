@@ -1,0 +1,8 @@
+[
+  { "id": "partner_1", "name": "Boulted Bread", "type": "partner", "lat": 35.7721, "lng": -78.6393, "address": "614 W South St, Raleigh", "perk": "Free filtered water refill with any purchase", "source": "partner", "verified": true },
+  { "id": "partner_2", "name": "Jubala Coffee", "type": "cafe", "lat": 35.8408, "lng": -78.6429, "address": "8450 Honeycutt Rd, Raleigh", "perk": "10% off drinks when you bring a reusable bottle", "source": "partner", "verified": true },
+  { "id": "partner_3", "name": "Wholesome Goodies Co-op", "type": "store", "lat": 35.7986, "lng": -78.6386, "address": "Person St, Raleigh", "perk": "Free refill station — bring any bottle", "source": "partner", "verified": true },
+  { "id": "partner_4", "name": "Trophy Brewing", "type": "partner", "lat": 35.7766, "lng": -78.6469, "address": "827 W Morgan St, Raleigh", "perk": "Complimentary water bottle refills", "source": "partner", "verified": false },
+  { "id": "partner_5", "name": "NC State Talley Union", "type": "refill_station", "lat": 35.7847, "lng": -78.6724, "address": "2610 Cates Ave, Raleigh", "perk": "Bottle-fill stations on every floor", "source": "partner", "verified": true },
+  { "id": "partner_6", "name": "The Morning Times", "type": "cafe", "lat": 35.7791, "lng": -78.6389, "address": "10 E Hargett St, Raleigh", "perk": "15% off with a reusable cup or bottle", "source": "partner", "verified": false }
+]

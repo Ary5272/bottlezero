@@ -1,0 +1,202 @@
+import { createContext, useContext, useEffect, useMemo, useState, useRef } from 'react'
+import { load, save } from '../lib/storage'
+import { checkBadges } from '../lib/badges'
+import { calcImpact } from '../lib/impact'
+import { supabase, isSupabaseEnabled } from '../lib/supabase'
+import { useAuth } from './AuthContext'
+
+const AppContext = createContext()
+
+const DEFAULT_PROFILE = {
+  name: '',
+  dailyGoal: 5,
+  createdAt: new Date().toISOString(),
+}
+
+function getToday() {
+  return new Date().toISOString().slice(0, 10)
+}
+
+function calcStreak(logs) {
+  if (logs.length === 0) return { current: 0, longest: 0 }
+
+  const days = new Set(logs.map(l => l.timestamp.slice(0, 10)))
+  const sorted = [...days].sort().reverse()
+
+  const today = getToday()
+  const yesterday = new Date(Date.now() - 86400000).toISOString().slice(0, 10)
+
+  if (!days.has(today) && !days.has(yesterday)) return { current: 0, longest: calcLongest(sorted) }
+
+  let current = 0
+  let checkDate = days.has(today) ? new Date(today) : new Date(yesterday)
+
+  while (days.has(checkDate.toISOString().slice(0, 10))) {
+    current++
+    checkDate = new Date(checkDate.getTime() - 86400000)
+  }
+
+  return { current, longest: Math.max(current, calcLongest(sorted)) }
+}
+
+function calcLongest(sortedDays) {
+  let longest = 0
+  let run = 1
+  for (let i = 1; i < sortedDays.length; i++) {
+    const prev = new Date(sortedDays[i - 1])
+    const curr = new Date(sortedDays[i])
+    if (prev - curr === 86400000) {
+      run++
+    } else {
+      longest = Math.max(longest, run)
+      run = 1
+    }
+  }
+  return Math.max(longest, run)
+}
+
+function countDaysGoalMet(logs, dailyGoal) {
+  const counts = {}
+  for (const log of logs) {
+    const day = log.timestamp.slice(0, 10)
+    counts[day] = (counts[day] || 0) + (log.count || 1)
+  }
+  return Object.values(counts).filter(c => c >= dailyGoal).length
+}
+
+function mapRow(r) {
+  return { id: r.id, count: r.count, timestamp: r.created_at, source: r.source }
+}
+
+export function AppProvider({ children }) {
+  const { user } = useAuth()
+  const cloud = isSupabaseEnabled && !!user
+
+  const [profile, setProfile] = useState(() => load('profile', { ...DEFAULT_PROFILE }))
+  const [logs, setLogs] = useState(() => load('logs', []))
+  const [syncing, setSyncing] = useState(false)
+  const pendingCancel = useRef(new Set())
+
+  useEffect(() => { if (!cloud) save('profile', profile) }, [profile, cloud])
+  useEffect(() => { if (!cloud) save('logs', logs) }, [logs, cloud])
+
+  useEffect(() => {
+    let cancelled = false
+
+    if (!cloud) {
+      setProfile(load('profile', { ...DEFAULT_PROFILE }))
+      setLogs(load('logs', []))
+      return
+    }
+
+    setSyncing(true)
+    ;(async () => {
+      const [{ data: prof }, { data: logRows }] = await Promise.all([
+        supabase.from('profiles').select('*').eq('id', user.id).maybeSingle(),
+        supabase.from('bottle_logs').select('*').eq('user_id', user.id).order('created_at'),
+      ])
+      if (cancelled) return
+      if (prof) {
+        setProfile({
+          name: prof.name || '',
+          dailyGoal: prof.daily_goal || 5,
+          createdAt: prof.created_at || new Date().toISOString(),
+        })
+      }
+      setLogs((logRows || []).map(mapRow))
+      setSyncing(false)
+    })()
+
+    return () => { cancelled = true }
+  }, [cloud, user?.id])
+
+  async function logBottle(count = 1, source = 'other') {
+    const tempId = crypto.randomUUID()
+    setLogs(prev => [...prev, {
+      id: tempId,
+      count,
+      timestamp: new Date().toISOString(),
+      source,
+      _temp: cloud,
+    }])
+
+    if (cloud) {
+      const { data, error } = await supabase
+        .from('bottle_logs')
+        .insert({ user_id: user.id, count, source })
+        .select()
+        .single()
+      if (error) {
+        setLogs(prev => prev.filter(l => l.id !== tempId))
+      } else if (pendingCancel.current.has(tempId)) {
+        pendingCancel.current.delete(tempId)
+        await supabase.from('bottle_logs').delete().eq('id', data.id)
+      } else {
+        setLogs(prev => prev.map(l => (l.id === tempId ? { ...l, _temp: false, serverId: data.id } : l)))
+      }
+    }
+    return tempId
+  }
+
+  async function removeLog(id) {
+    let target
+    setLogs(prev => {
+      target = prev.find(l => l.id === id)
+      return prev.filter(l => l.id !== id)
+    })
+    if (cloud && target) {
+      if (target._temp) pendingCancel.current.add(id)
+      else await supabase.from('bottle_logs').delete().eq('id', target.serverId || target.id)
+    }
+  }
+
+  async function updateProfile(payload) {
+    setProfile(prev => ({ ...prev, ...payload }))
+    if (cloud) {
+      const update = {}
+      if ('name' in payload) update.name = payload.name
+      if ('dailyGoal' in payload) update.daily_goal = payload.dailyGoal
+      await supabase.from('profiles').update(update).eq('id', user.id)
+    }
+  }
+
+  async function resetData() {
+    if (cloud) {
+      await supabase.from('bottle_logs').delete().eq('user_id', user.id)
+      setLogs([])
+    } else {
+      setLogs([])
+      setProfile({ ...DEFAULT_PROFILE })
+      save('logs', [])
+      save('profile', { ...DEFAULT_PROFILE })
+    }
+  }
+
+  const derived = useMemo(() => {
+    const totalBottles = logs.reduce((sum, l) => sum + (l.count || 1), 0)
+    const todayCount = logs
+      .filter(l => l.timestamp.slice(0, 10) === getToday())
+      .reduce((sum, l) => sum + (l.count || 1), 0)
+    const streak = calcStreak(logs)
+    const daysGoalMet = countDaysGoalMet(logs, profile.dailyGoal)
+    const badges = checkBadges(totalBottles, streak.current, daysGoalMet)
+    const impact = calcImpact(totalBottles)
+    return { totalBottles, todayCount, streak, daysGoalMet, badges, impact }
+  }, [logs, profile.dailyGoal])
+
+  return (
+    <AppContext.Provider value={{
+      profile, logs, ...derived,
+      cloud, syncing,
+      logBottle, removeLog, updateProfile, resetData,
+    }}>
+      {children}
+    </AppContext.Provider>
+  )
+}
+
+export function useApp() {
+  const ctx = useContext(AppContext)
+  if (!ctx) throw new Error('useApp must be inside AppProvider')
+  return ctx
+}

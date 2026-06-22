@@ -1,0 +1,12 @@
+[
+  { "id": "seed_1", "name": "Pullen Park Fountain", "type": "fountain", "lat": 35.7804, "lng": -78.6628, "address": "Pullen Park, Raleigh, NC", "source": "seed", "verified": true },
+  { "id": "seed_2", "name": "NC State Campus Refill Station", "type": "refill_station", "lat": 35.7847, "lng": -78.6821, "address": "NC State University, Raleigh, NC", "source": "seed", "verified": true },
+  { "id": "seed_3", "name": "State Farmers Market", "type": "store", "lat": 35.7537, "lng": -78.6683, "address": "1201 Agriculture St, Raleigh, NC", "source": "seed", "verified": true },
+  { "id": "seed_4", "name": "Dorothea Dix Park Fountain", "type": "fountain", "lat": 35.7688, "lng": -78.6564, "address": "Dorothea Dix Park, Raleigh, NC", "source": "seed", "verified": true },
+  { "id": "seed_5", "name": "Neuse River Greenway Refill", "type": "refill_station", "lat": 35.8218, "lng": -78.5692, "address": "Neuse River Trail, Raleigh, NC", "source": "seed", "verified": true },
+  { "id": "seed_6", "name": "Boulted Bread Eco Cafe", "type": "cafe", "lat": 35.7721, "lng": -78.6393, "address": "614 W South St, Raleigh, NC", "source": "seed", "verified": false },
+  { "id": "seed_7", "name": "Lake Johnson Park Water", "type": "fountain", "lat": 35.7457, "lng": -78.7113, "address": "Lake Johnson Park, Raleigh, NC", "source": "seed", "verified": true },
+  { "id": "seed_8", "name": "Downtown Raleigh Refill Point", "type": "refill_station", "lat": 35.7796, "lng": -78.6382, "address": "Fayetteville St, Raleigh, NC", "source": "seed", "verified": false },
+  { "id": "seed_9", "name": "William B. Umstead Park Fountain", "type": "fountain", "lat": 35.8671, "lng": -78.7503, "address": "Umstead State Park, Raleigh, NC", "source": "seed", "verified": true },
+  { "id": "seed_10", "name": "Transfer Co. Food Hall", "type": "store", "lat": 35.7914, "lng": -78.6244, "address": "500 E Davie St, Raleigh, NC", "source": "seed", "verified": true }
+]
