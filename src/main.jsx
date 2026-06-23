@@ -6,6 +6,7 @@ import { AuthProvider } from './state/AuthContext'
 import { AppProvider } from './state/AppContext'
 import { ToastProvider } from './state/ToastContext'
 import { ReminderProvider } from './state/ReminderContext'
+import './lib/pwa'
 import './index.css'
 import App from './App.jsx'
 

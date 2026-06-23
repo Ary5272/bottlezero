@@ -6,6 +6,7 @@ const AuthContext = createContext()
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null)
   const [loading, setLoading] = useState(isSupabaseEnabled)
+  const [recovering, setRecovering] = useState(false)
 
   useEffect(() => {
     if (!isSupabaseEnabled) {
@@ -16,8 +17,9 @@ export function AuthProvider({ children }) {
       setUser(data.session?.user ?? null)
       setLoading(false)
     })
-    const { data: sub } = supabase.auth.onAuthStateChange((_event, session) => {
+    const { data: sub } = supabase.auth.onAuthStateChange((event, session) => {
       setUser(session?.user ?? null)
+      if (event === 'PASSWORD_RECOVERY') setRecovering(true)
     })
     return () => sub.subscription.unsubscribe()
   }, [])
@@ -45,9 +47,24 @@ export function AuthProvider({ children }) {
     await supabase.auth.signOut()
   }, [])
 
+  const resetPassword = useCallback(async (email) => {
+    if (!isSupabaseEnabled) throw new Error('Cloud sync isn\'t set up yet.')
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: window.location.origin,
+    })
+    if (error) throw error
+  }, [])
+
+  const updatePassword = useCallback(async (password) => {
+    if (!isSupabaseEnabled) throw new Error('Cloud sync isn\'t set up yet.')
+    const { error } = await supabase.auth.updateUser({ password })
+    if (error) throw error
+    setRecovering(false)
+  }, [])
+
   const value = useMemo(
-    () => ({ user, loading, isSupabaseEnabled, signUp, signIn, signOut }),
-    [user, loading, signUp, signIn, signOut]
+    () => ({ user, loading, isSupabaseEnabled, recovering, signUp, signIn, signOut, resetPassword, updatePassword, dismissRecovery: () => setRecovering(false) }),
+    [user, loading, recovering, signUp, signIn, signOut, resetPassword, updatePassword]
   )
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>

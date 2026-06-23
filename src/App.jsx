@@ -4,12 +4,15 @@ import NavBar from './components/NavBar'
 import TopBar from './components/TopBar'
 import Celebrations from './components/Celebrations'
 import HabitReminders from './components/HabitReminders'
-import InstallPrompt from './components/InstallPrompt'
+import InstallModal from './components/InstallModal'
+import RecoveryModal from './components/RecoveryModal'
 import ErrorBoundary from './components/ErrorBoundary'
 import Onboarding, { needsOnboarding } from './components/Onboarding'
 import Icon from './components/Icon'
 import Dashboard from './routes/Dashboard'
 import { routeImporters, prefetchAll } from './lib/prefetch'
+import { isStandalone } from './lib/pwa'
+import { load, save } from './lib/storage'
 
 const Map = lazy(routeImporters['/map'])
 const Rewards = lazy(routeImporters['/rewards'])
@@ -49,6 +52,7 @@ export default function App() {
   const { pathname } = useLocation()
   const chromeless = pathname === '/auth'
   const [onboarding, setOnboarding] = useState(needsOnboarding())
+  const [showInstall, setShowInstall] = useState(false)
 
   useEffect(() => {
     const ric = window.requestIdleCallback || ((cb) => setTimeout(cb, 1200))
@@ -62,7 +66,17 @@ export default function App() {
     if (main) main.scrollTo({ top: 0 })
   }, [pathname])
 
-  if (onboarding) return <Onboarding onDone={() => setOnboarding(false)} />
+  function finishOnboarding() {
+    setOnboarding(false)
+    if (!isStandalone() && !load('install_prompted', false)) setShowInstall(true)
+  }
+
+  function closeInstall() {
+    save('install_prompted', true)
+    setShowInstall(false)
+  }
+
+  if (onboarding) return <Onboarding onDone={finishOnboarding} />
 
   return (
     <>
@@ -93,7 +107,8 @@ export default function App() {
       {!chromeless && <NavBar />}
       {!chromeless && <Celebrations />}
       {!chromeless && <HabitReminders />}
-      {!chromeless && <InstallPrompt />}
+      {showInstall && <InstallModal onClose={closeInstall} />}
+      <RecoveryModal />
     </>
   )
 }
