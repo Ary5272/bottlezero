@@ -77,8 +77,8 @@ export function AppProvider({ children }) {
   const [syncing, setSyncing] = useState(false)
   const pendingCancel = useRef(new Set())
 
-  useEffect(() => { if (!cloud) save('profile', profile) }, [profile, cloud])
-  useEffect(() => { if (!cloud) save('logs', logs) }, [logs, cloud])
+  useEffect(() => { save('profile', profile) }, [profile])
+  useEffect(() => { save('logs', logs) }, [logs])
 
   useEffect(() => {
     let cancelled = false
@@ -103,8 +103,21 @@ export function AppProvider({ children }) {
           createdAt: prof.created_at || new Date().toISOString(),
         })
       }
-      setLogs((logRows || []).map(mapRow))
+      const cloudLogs = (logRows || []).map(mapRow)
+      const unsynced = (load('logs', []) || []).filter(l => l && l.unsynced)
+      setLogs([...cloudLogs, ...unsynced])
       setSyncing(false)
+
+      for (const u of unsynced) {
+        const { data, error } = await supabase
+          .from('bottle_logs')
+          .insert({ user_id: user.id, count: u.count, source: u.source })
+          .select()
+          .single()
+        if (!error && data && !cancelled) {
+          setLogs(prev => prev.map(l => (l.id === u.id ? mapRow(data) : l)))
+        }
+      }
     })()
 
     return () => { cancelled = true }
@@ -127,7 +140,7 @@ export function AppProvider({ children }) {
         .select()
         .single()
       if (error) {
-        setLogs(prev => prev.filter(l => l.id !== tempId))
+        setLogs(prev => prev.map(l => (l.id === tempId ? { ...l, _temp: false, unsynced: true } : l)))
       } else if (pendingCancel.current.has(tempId)) {
         pendingCancel.current.delete(tempId)
         await supabase.from('bottle_logs').delete().eq('id', data.id)
