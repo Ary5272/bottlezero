@@ -14,7 +14,7 @@ const SOURCES = [
 ]
 
 export default function Dashboard() {
-  const { impact, streak, totalBottles, todayCount } = useApp()
+  const { impact, streak, totalBottles, todayCount, cloud } = useApp()
   const [shareMsg, setShareMsg] = useState('')
   const [source, setSource] = useState('home')
 
@@ -63,6 +63,11 @@ export default function Dashboard() {
             </button>
           ))}
         </div>
+        <p className="text-[11px] text-faint flex items-center gap-1.5">
+          <Icon name={cloud ? 'cloud' : 'check'} size={12} stroke={2.2} className="text-accent" />
+          {cloud ? 'Synced to your account' : 'Saved on this device'}
+          {!cloud && <Link to="/auth" className="text-accent font-medium hover:underline">· Sign in to sync</Link>}
+        </p>
       </section>
 
       <div className="grid grid-cols-2 gap-3">

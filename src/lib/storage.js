@@ -10,9 +10,13 @@ export function load(key, fallback) {
 }
 
 export function save(key, value) {
-  localStorage.setItem(PREFIX + key, JSON.stringify(value))
+  try {
+    localStorage.setItem(PREFIX + key, JSON.stringify(value))
+  } catch { void 0 }
 }
 
 export function remove(key) {
-  localStorage.removeItem(PREFIX + key)
+  try {
+    localStorage.removeItem(PREFIX + key)
+  } catch { void 0 }
 }
