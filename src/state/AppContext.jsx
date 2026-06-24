@@ -68,6 +68,23 @@ function mapRow(r) {
   return { id: r.id, count: r.count, timestamp: r.created_at, source: r.source }
 }
 
+async function fetchAllLogs(userId) {
+  const all = []
+  const size = 1000
+  for (let from = 0; ; from += size) {
+    const { data, error } = await supabase
+      .from('bottle_logs')
+      .select('*')
+      .eq('user_id', userId)
+      .order('created_at', { ascending: true })
+      .range(from, from + size - 1)
+    if (error || !data || data.length === 0) break
+    all.push(...data)
+    if (data.length < size) break
+  }
+  return all
+}
+
 export function AppProvider({ children }) {
   const { user } = useAuth()
   const cloud = isSupabaseEnabled && !!user
@@ -91,9 +108,9 @@ export function AppProvider({ children }) {
 
     setSyncing(true)
     ;(async () => {
-      const [{ data: prof }, { data: logRows }] = await Promise.all([
+      const [{ data: prof }, logRows] = await Promise.all([
         supabase.from('profiles').select('*').eq('id', user.id).maybeSingle(),
-        supabase.from('bottle_logs').select('*').eq('user_id', user.id).order('created_at'),
+        fetchAllLogs(user.id),
       ])
       if (cancelled) return
       if (prof) {
