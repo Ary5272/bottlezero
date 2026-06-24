@@ -4,12 +4,9 @@ import { useApp } from '../state/AppContext'
 import PageHeader from '../components/PageHeader'
 import Icon from '../components/Icon'
 import EmptyState from '../components/EmptyState'
+import { localDay } from '../lib/date'
 
 const EQUIV_ICONS = { car: 'cloud', phone: 'sparkle', bulb: 'sparkle', bag: 'recycle' }
-
-function dayKey(d) {
-  return d.toISOString().slice(0, 10)
-}
 
 const SOURCE_LABELS = {
   home: 'At home',
@@ -42,7 +39,7 @@ export default function Insights() {
     const byDay = {}
     const bySource = {}
     for (const l of logs) {
-      const day = l.timestamp.slice(0, 10)
+      const day = localDay(l.timestamp)
       byDay[day] = (byDay[day] || 0) + (l.count || 1)
       const s = l.source || 'other'
       bySource[s] = (bySource[s] || 0) + (l.count || 1)
@@ -52,16 +49,16 @@ export default function Insights() {
     for (let i = 6; i >= 0; i--) {
       const d = new Date(Date.now() - i * 86400000)
       days.push({
-        key: dayKey(d),
+        key: localDay(d),
         label: d.toLocaleDateString('en-US', { weekday: 'narrow' }),
-        count: byDay[dayKey(d)] || 0,
+        count: byDay[localDay(d)] || 0,
       })
     }
 
     const thisWeek = days.reduce((s, d) => s + d.count, 0)
     let lastWeek = 0
     for (let i = 13; i >= 7; i--) {
-      lastWeek += byDay[dayKey(new Date(Date.now() - i * 86400000))] || 0
+      lastWeek += byDay[localDay(new Date(Date.now() - i * 86400000))] || 0
     }
 
     const activeDays = Object.keys(byDay).length

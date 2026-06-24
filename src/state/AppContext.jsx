@@ -3,6 +3,7 @@ import { load, save } from '../lib/storage'
 import { checkBadges } from '../lib/badges'
 import { calcImpact } from '../lib/impact'
 import { supabase, isSupabaseEnabled } from '../lib/supabase'
+import { localDay, daysBetween } from '../lib/date'
 import { useAuth } from './AuthContext'
 
 const AppContext = createContext()
@@ -14,26 +15,26 @@ const DEFAULT_PROFILE = {
 }
 
 function getToday() {
-  return new Date().toISOString().slice(0, 10)
+  return localDay()
 }
 
 function calcStreak(logs) {
   if (logs.length === 0) return { current: 0, longest: 0 }
 
-  const days = new Set(logs.map(l => l.timestamp.slice(0, 10)))
+  const days = new Set(logs.map(l => localDay(l.timestamp)))
   const sorted = [...days].sort().reverse()
 
   const today = getToday()
-  const yesterday = new Date(Date.now() - 86400000).toISOString().slice(0, 10)
+  const yesterday = localDay(new Date(Date.now() - 86400000))
 
   if (!days.has(today) && !days.has(yesterday)) return { current: 0, longest: calcLongest(sorted) }
 
   let current = 0
-  let checkDate = days.has(today) ? new Date(today) : new Date(yesterday)
+  let cursor = days.has(today) ? new Date() : new Date(Date.now() - 86400000)
 
-  while (days.has(checkDate.toISOString().slice(0, 10))) {
+  while (days.has(localDay(cursor))) {
     current++
-    checkDate = new Date(checkDate.getTime() - 86400000)
+    cursor = new Date(cursor.getTime() - 86400000)
   }
 
   return { current, longest: Math.max(current, calcLongest(sorted)) }
@@ -43,9 +44,7 @@ function calcLongest(sortedDays) {
   let longest = 0
   let run = 1
   for (let i = 1; i < sortedDays.length; i++) {
-    const prev = new Date(sortedDays[i - 1])
-    const curr = new Date(sortedDays[i])
-    if (prev - curr === 86400000) {
+    if (daysBetween(sortedDays[i - 1], sortedDays[i]) === 1) {
       run++
     } else {
       longest = Math.max(longest, run)
@@ -58,7 +57,7 @@ function calcLongest(sortedDays) {
 function countDaysGoalMet(logs, dailyGoal) {
   const counts = {}
   for (const log of logs) {
-    const day = log.timestamp.slice(0, 10)
+    const day = localDay(log.timestamp)
     counts[day] = (counts[day] || 0) + (log.count || 1)
   }
   return Object.values(counts).filter(c => c >= dailyGoal).length
@@ -205,7 +204,7 @@ export function AppProvider({ children }) {
   const derived = useMemo(() => {
     const totalBottles = logs.reduce((sum, l) => sum + (l.count || 1), 0)
     const todayCount = logs
-      .filter(l => l.timestamp.slice(0, 10) === getToday())
+      .filter(l => localDay(l.timestamp) === getToday())
       .reduce((sum, l) => sum + (l.count || 1), 0)
     const streak = calcStreak(logs)
     const daysGoalMet = countDaysGoalMet(logs, profile.dailyGoal)

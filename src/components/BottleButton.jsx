@@ -67,7 +67,7 @@ export default function BottleButton({ source = 'home' }) {
       </div>
 
       <div className="text-center">
-        <p className="text-sm text-muted">
+        <p className="text-sm text-muted" aria-live="polite">
           <span className="font-bold text-ink text-base tabular-nums">{todayCount}</span>
           <span className="text-faint"> of {profile.dailyGoal} today</span>
         </p>
