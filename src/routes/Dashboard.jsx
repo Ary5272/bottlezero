@@ -1,9 +1,11 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useApp } from '../state/AppContext'
+import { useToast } from '../state/ToastContext'
 import BottleButton from '../components/BottleButton'
 import StatCard from '../components/StatCard'
 import Icon from '../components/Icon'
+import { haptic } from '../lib/motion'
 import { shareContent, impactMessage } from '../lib/share'
 
 const SOURCES = [
@@ -14,9 +16,20 @@ const SOURCES = [
 ]
 
 export default function Dashboard() {
-  const { impact, streak, totalBottles, todayCount, cloud, syncing } = useApp()
+  const { impact, streak, totalBottles, todayCount, cloud, syncing, logBottle, removeLog } = useApp()
+  const { toast } = useToast()
   const [shareMsg, setShareMsg] = useState('')
   const [source, setSource] = useState('home')
+  const [showMany, setShowMany] = useState(false)
+  const [qty, setQty] = useState(2)
+
+  async function logMany() {
+    haptic(14)
+    const id = await logBottle(qty, source)
+    toast(`Logged ${qty} bottles`, { icon: 'droplet', actionLabel: 'Undo', onAction: () => removeLog(id) })
+    setShowMany(false)
+    setQty(2)
+  }
 
   const nudge = totalBottles === 0
     ? { icon: 'sparkle', text: 'Tap the button to log your first saved bottle.' }
@@ -63,6 +76,31 @@ export default function Dashboard() {
             </button>
           ))}
         </div>
+
+        {!showMany ? (
+          <button onClick={() => setShowMany(true)} className="text-[11px] text-faint hover:text-accent cursor-pointer">
+            Log several at once
+          </button>
+        ) : (
+          <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1 bg-canvas border border-line rounded-full p-1">
+              <button onClick={() => setQty(Math.max(1, qty - 1))} aria-label="Decrease" className="grid place-items-center w-7 h-7 rounded-full hover:bg-line text-ink cursor-pointer">
+                <Icon name="minus" size={14} stroke={2.4} />
+              </button>
+              <span className="w-7 text-center text-sm font-bold text-ink tabular-nums">{qty}</span>
+              <button onClick={() => setQty(qty + 1)} aria-label="Increase" className="grid place-items-center w-7 h-7 rounded-full hover:bg-line text-ink cursor-pointer">
+                <Icon name="plus" size={14} stroke={2.4} />
+              </button>
+            </div>
+            <button onClick={logMany} className="bg-accent text-white text-sm font-medium px-4 py-1.5 rounded-full hover:bg-accent-dark cursor-pointer active:scale-95">
+              Log {qty}
+            </button>
+            <button onClick={() => { setShowMany(false); setQty(2) }} className="text-xs text-faint hover:text-muted cursor-pointer px-1">
+              Cancel
+            </button>
+          </div>
+        )}
+
         <p className="text-[11px] text-faint flex items-center gap-1.5" aria-live="polite">
           <Icon name={syncing ? 'refresh' : cloud ? 'cloud' : 'check'} size={12} stroke={2.2} className={`text-accent ${syncing ? 'animate-spin' : ''}`} />
           {syncing ? 'Syncing…' : cloud ? 'Synced to your account' : 'Saved on this device'}

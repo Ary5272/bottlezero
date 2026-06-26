@@ -7,9 +7,10 @@ import PageHeader from '../components/PageHeader'
 import Icon from '../components/Icon'
 import ThemeToggle from '../components/ThemeToggle'
 import { save } from '../lib/storage'
+import { localDay } from '../lib/date'
 
 export default function Profile() {
-  const { profile, updateProfile, resetData, totalBottles, streak, impact, cloud, syncing } = useApp()
+  const { profile, updateProfile, resetData, totalBottles, streak, impact, cloud, syncing, logs } = useApp()
   const { user, signOut, isSupabaseEnabled } = useAuth()
   const { settings: reminder, permission, supported, enable, disable, setTime } = useReminders()
   const navigate = useNavigate()
@@ -33,6 +34,31 @@ export default function Profile() {
     updateProfile({ name, dailyGoal: Number(goal) || 5 })
     setSaved(true)
     setTimeout(() => setSaved(false), 2000)
+  }
+
+  function exportData() {
+    const data = {
+      app: 'BottleZero',
+      exportedAt: new Date().toISOString(),
+      profile: { name: profile.name, dailyGoal: profile.dailyGoal },
+      totals: {
+        bottles: totalBottles,
+        plasticKg: impact.plasticKg,
+        co2Kg: impact.co2Kg,
+        moneySaved: impact.moneySaved,
+        longestStreakDays: streak.longest,
+      },
+      logs: logs.map(l => ({ count: l.count, source: l.source, timestamp: l.timestamp })),
+    }
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `bottlezero-data-${localDay()}.json`
+    document.body.appendChild(a)
+    a.click()
+    a.remove()
+    URL.revokeObjectURL(url)
   }
 
   function replayTour() {
@@ -158,6 +184,7 @@ export default function Profile() {
         <RowLink to="/insights" icon="chart" label="Dashboard" />
         <RowLink to="/learn" icon="book" label="Learn" />
         <RowLink to="/about" icon="leaf" label="About & impact sources" />
+        <RowButton icon="download" label="Export my data" onClick={exportData} />
         <RowButton icon="refresh" label="Replay the tour" onClick={replayTour} />
       </section>
 

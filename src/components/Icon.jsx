@@ -29,6 +29,8 @@ const PATHS = {
   external: <><path d="M14 4h6v6" /><path d="M20 4l-8.5 8.5" /><path d="M18 13.5V18a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4.5" /></>,
   trash: <><path d="M4 7h16M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2M6 7l1 13a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1l1-13M10 11v6M14 11v6" /></>,
   refresh: <><path d="M3.5 12a8.5 8.5 0 0 1 14.5-6l2 2" /><path d="M20 4v4h-4" /><path d="M20.5 12a8.5 8.5 0 0 1-14.5 6l-2-2" /><path d="M4 20v-4h4" /></>,
+  download: <><path d="M12 3.5v11" /><path d="M7.5 10.5 12 15l4.5-4.5" /><path d="M5 20h14" /></>,
+  minus: <path d="M5 12h14" />,
   calendar: <><rect x="4" y="5.5" width="16" height="15" rx="2" /><path d="M4 9.5h16M8 3.5v4M16 3.5v4" /></>,
 }
 
