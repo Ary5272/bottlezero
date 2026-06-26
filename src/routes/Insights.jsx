@@ -28,7 +28,7 @@ export default function Insights() {
   useEffect(() => {
     if (totalBottles <= 0) { setEquiv(null); return }
     let cancelled = false
-    fetch(`/api/impact?bottles=${totalBottles}`)
+    fetch(`https://bottlezero.vercel.app/api/impact?bottles=${totalBottles}`)
       .then(r => (r.ok ? r.json() : null))
       .then(d => { if (!cancelled && d && d.equivalents) setEquiv(d) })
       .catch(() => { if (!cancelled) setEquiv(null) })

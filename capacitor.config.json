@@ -1,0 +1,6 @@
+{
+  "appId": "com.bottlezero.app",
+  "appName": "BottleZero",
+  "webDir": "dist",
+  "backgroundColor": "#0e9f6e"
+}
