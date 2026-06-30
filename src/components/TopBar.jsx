@@ -9,7 +9,7 @@ export default function TopBar() {
   const { points, level } = getRewards(totalBottles, unlocked, daysGoalMet)
 
   return (
-    <header className="sticky top-0 z-40 bg-canvas/90 backdrop-blur-sm border-b border-line">
+    <header className="sticky top-0 z-40 bg-canvas/90 backdrop-blur-sm border-b border-line" style={{ paddingTop: 'env(safe-area-inset-top)' }}>
       <div className="max-w-xl mx-auto h-14 px-4 flex items-center justify-between">
         <Link to="/" className="flex items-center gap-2 active:scale-[0.98] transition-transform">
           <span className="grid place-items-center w-7 h-7 rounded-[9px] bg-accent text-white shadow-soft">
