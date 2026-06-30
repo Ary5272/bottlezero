@@ -13,7 +13,9 @@ export default function HabitReminders() {
   const goal = profile.dailyGoal
 
   const ref = useRef({ todayCount, goal })
-  ref.current = { todayCount, goal }
+  useEffect(() => {
+    ref.current = { todayCount, goal }
+  })
 
   useEffect(() => {
     if (!('setAppBadge' in navigator)) return

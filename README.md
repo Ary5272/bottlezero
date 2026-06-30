@@ -30,12 +30,21 @@ npm run dev      # http://localhost:5173
 npm run build    # production build
 ```
 
-Cloud accounts need Supabase keys in a `.env` file (the app runs fully without them in device-only mode):
+Cloud sync needs Supabase keys. Copy `.env.example` to `.env` and fill in your project's values (the app runs fully without them in device-only mode):
 
 ```
 VITE_SUPABASE_URL=...
 VITE_SUPABASE_ANON_KEY=...
 ```
+
+## Mobile apps (Android & iOS)
+
+The same React codebase ships as native apps via [Capacitor](https://capacitorjs.com) — there's no separate native code to maintain.
+
+- **Android** — the project lives in `android/`. Build an installable `.apk` with the step-by-step [ANDROID_BUILD.md](ANDROID_BUILD.md).
+- **iOS** — add the iOS project on a Mac (`npx cap add ios`) and open it in Xcode.
+
+After changing the app, run `npm run sync` to rebuild the web app and copy it into the native projects. More detail in [NATIVE.md](NATIVE.md).
 
 ## More
 

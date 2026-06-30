@@ -1,13 +1,33 @@
 {
   "name": "bottlezero",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
   "type": "module",
+  "description": "Progressive Web App (plus Android & iOS) for tracking the single-use plastic bottles you avoid — impact stats, a live refill map, streaks, and friend challenges. Built for the Congressional App Challenge.",
+  "author": "Ary5272",
+  "homepage": "https://bottlezero.vercel.app",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Ary5272/bottlezero.git"
+  },
+  "keywords": [
+    "sustainability",
+    "plastic-reduction",
+    "pwa",
+    "react",
+    "vite",
+    "capacitor",
+    "congressional-app-challenge"
+  ],
+  "engines": {
+    "node": ">=20.19"
+  },
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "sync": "vite build && cap sync"
   },
   "dependencies": {
     "@capacitor/android": "^8.4.1",
