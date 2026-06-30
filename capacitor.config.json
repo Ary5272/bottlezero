@@ -2,5 +2,12 @@
   "appId": "com.bottlezero.app",
   "appName": "BottleZero",
   "webDir": "dist",
-  "backgroundColor": "#0e9f6e"
+  "backgroundColor": "#0e9f6e",
+  "plugins": {
+    "StatusBar": {
+      "overlaysWebView": false,
+      "style": "LIGHT",
+      "backgroundColor": "#f7f8f7"
+    }
+  }
 }

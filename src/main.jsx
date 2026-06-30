@@ -7,8 +7,11 @@ import { AppProvider } from './state/AppContext'
 import { ToastProvider } from './state/ToastContext'
 import { ReminderProvider } from './state/ReminderContext'
 import './lib/pwa'
+import { initNativeStatusBar } from './lib/native'
 import './index.css'
 import App from './App.jsx'
+
+initNativeStatusBar()
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
