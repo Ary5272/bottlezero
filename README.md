@@ -1,4 +1,17 @@
+<p align="center">
+  <img src="docs/hero.svg" alt="BottleZero — track every plastic bottle you avoid" width="100%">
+</p>
+
 # BottleZero 💧
+
+<p>
+  <img alt="React 19" src="https://img.shields.io/badge/React_19-087ea4?logo=react&logoColor=white">
+  <img alt="Vite" src="https://img.shields.io/badge/Vite-646cff?logo=vite&logoColor=white">
+  <img alt="Tailwind CSS" src="https://img.shields.io/badge/Tailwind_CSS-38bdf8?logo=tailwindcss&logoColor=white">
+  <img alt="Supabase" src="https://img.shields.io/badge/Supabase-3ecf8e?logo=supabase&logoColor=white">
+  <img alt="Capacitor" src="https://img.shields.io/badge/Capacitor-119eff?logo=capacitor&logoColor=white">
+  <img alt="PWA" src="https://img.shields.io/badge/PWA-installable-5a0fc8">
+</p>
 
 A Progressive Web App that helps people cut down on single-use plastic bottles — track the bottles you avoid, see your real environmental impact, find places to refill, and turn it into a game with friends.
 
