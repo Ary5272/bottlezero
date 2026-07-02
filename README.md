@@ -25,11 +25,12 @@ A Progressive Web App that helps people cut down on single-use plastic bottles �
 - **Track** every single-use bottle you avoid, with one tap (and a refill-source picker).
 - **See your impact** — plastic, CO₂, and money saved, plus streaks, points, and levels.
 - **Find refills** on a live map (real OpenStreetMap fountains + partner spots).
-- **Compete** with friends through challenges and leaderboards.
+- **Compete** with friends through challenges and leaderboards — plus a live community-wide total.
+- **Share** your impact as a generated picture card, ready to post anywhere.
 - **Learn** from curated, sourced facts that refresh daily.
 - **Dashboard** with charts, trends, and a Python-powered "real-world equivalents" engine.
 
-Works installed (PWA) on phones, tablets, and computers — light/dark themes, offline support, and opt-in daily reminders.
+Works installed (PWA) on phones, tablets, and computers — light/dark themes, true offline support, and opt-in daily reminders.
 
 ## Tech stack
 

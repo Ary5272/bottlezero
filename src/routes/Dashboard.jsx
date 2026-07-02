@@ -4,9 +4,11 @@ import { useApp } from '../state/AppContext'
 import { useToast } from '../state/ToastContext'
 import BottleButton from '../components/BottleButton'
 import StatCard from '../components/StatCard'
+import CommunityImpact from '../components/CommunityImpact'
 import Icon from '../components/Icon'
 import { haptic } from '../lib/motion'
 import { shareContent, impactMessage } from '../lib/share'
+import { shareImpactCard } from '../lib/shareCard'
 
 const SOURCES = [
   { key: 'home', label: 'Home', icon: 'home' },
@@ -40,14 +42,28 @@ export default function Dashboard() {
       : null
 
   async function handleShare() {
-    const result = await shareContent({
-      title: 'My BottleZero Impact',
-      text: impactMessage(impact),
-      url: window.location.origin,
+    const result = await shareImpactCard({
+      bottles: totalBottles,
+      plasticKg: impact.plasticKg,
+      co2Kg: impact.co2Kg,
+      moneySaved: impact.moneySaved,
+      streak: streak.current,
     })
-    if (result === 'copied') {
-      setShareMsg('Link copied')
-      setTimeout(() => setShareMsg(''), 2000)
+    if (result === 'downloaded') {
+      setShareMsg('Impact card saved!')
+      setTimeout(() => setShareMsg(''), 2500)
+      return
+    }
+    if (result === 'failed') {
+      const fallback = await shareContent({
+        title: 'My BottleZero Impact',
+        text: impactMessage(impact),
+        url: window.location.origin,
+      })
+      if (fallback === 'copied') {
+        setShareMsg('Link copied')
+        setTimeout(() => setShareMsg(''), 2000)
+      }
     }
   }
 
@@ -114,6 +130,8 @@ export default function Dashboard() {
         <StatCard icon="leaf" label="plastic avoided" value={impact.plasticKg} unit="kg" />
         <StatCard icon="cloud" label="CO₂ prevented" value={impact.co2Kg} unit="kg" />
       </div>
+
+      <CommunityImpact />
 
       <section className="bg-surface rounded-2xl border border-line p-4 shadow-soft">
         <div className="flex items-center justify-between mb-1">

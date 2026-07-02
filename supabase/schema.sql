@@ -1,10 +1,3 @@
--- BottleZero database schema for Supabase
--- Run this in the Supabase SQL Editor (Dashboard → SQL Editor → New query → paste → Run)
-
--- =====================================================================
--- TABLES
--- =====================================================================
-
 create table if not exists public.profiles (
   id uuid references auth.users on delete cascade primary key,
   name text,
@@ -39,10 +32,6 @@ create table if not exists public.challenge_members (
   unique(challenge_id, user_id)
 );
 
--- =====================================================================
--- AUTO-CREATE PROFILE ON SIGNUP
--- =====================================================================
-
 create or replace function public.handle_new_user()
 returns trigger
 language plpgsql
@@ -60,38 +49,25 @@ create trigger on_auth_user_created
   after insert on auth.users
   for each row execute procedure public.handle_new_user();
 
--- =====================================================================
--- ROW LEVEL SECURITY
--- =====================================================================
-
 alter table public.profiles enable row level security;
 alter table public.bottle_logs enable row level security;
 alter table public.challenges enable row level security;
 alter table public.challenge_members enable row level security;
 
--- profiles: users manage their own row
 create policy "own profile select" on public.profiles for select using (auth.uid() = id);
 create policy "own profile insert" on public.profiles for insert with check (auth.uid() = id);
 create policy "own profile update" on public.profiles for update using (auth.uid() = id);
 
--- bottle_logs: users manage their own logs
 create policy "own logs select" on public.bottle_logs for select using (auth.uid() = user_id);
 create policy "own logs insert" on public.bottle_logs for insert with check (auth.uid() = user_id);
 create policy "own logs delete" on public.bottle_logs for delete using (auth.uid() = user_id);
 
--- challenges: any signed-in user can read (discover by code) and create
 create policy "challenges select" on public.challenges for select using (auth.role() = 'authenticated');
 create policy "challenges insert" on public.challenges for insert with check (auth.uid() = created_by);
 
--- challenge_members: users manage their own membership
 create policy "members select own" on public.challenge_members for select using (auth.uid() = user_id);
 create policy "members insert own" on public.challenge_members for insert with check (auth.uid() = user_id);
 create policy "members delete own" on public.challenge_members for delete using (auth.uid() = user_id);
-
--- =====================================================================
--- LEADERBOARD (SECURITY DEFINER so members can see each other's totals
--- without exposing raw logs via RLS)
--- =====================================================================
 
 create or replace function public.get_challenge_leaderboard(p_code text)
 returns table (name text, bottles bigint)
@@ -106,7 +82,6 @@ begin
     raise exception 'Challenge not found';
   end if;
 
-  -- caller must be a member of this challenge
   if not exists (
     select 1 from public.challenge_members
     where challenge_id = v_challenge.id and user_id = auth.uid()
