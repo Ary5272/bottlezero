@@ -1,12 +1,10 @@
 import { Link } from 'react-router-dom'
 import { useApp } from '../state/AppContext'
-import { getRewards } from '../lib/rewards'
 import Icon from './Icon'
 
 export default function TopBar() {
-  const { totalBottles, badges, daysGoalMet } = useApp()
-  const unlocked = badges.filter(b => b.unlocked).length
-  const { points, level } = getRewards(totalBottles, unlocked, daysGoalMet)
+  const { rewards } = useApp()
+  const { points, level } = rewards
 
   return (
     <header className="sticky top-0 z-40 bg-canvas/90 backdrop-blur-sm border-b border-line" style={{ paddingTop: 'env(safe-area-inset-top)' }}>

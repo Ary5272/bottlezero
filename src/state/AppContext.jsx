@@ -2,8 +2,10 @@ import { createContext, useContext, useEffect, useMemo, useState, useRef } from 
 import { load, save } from '../lib/storage'
 import { checkBadges } from '../lib/badges'
 import { calcImpact } from '../lib/impact'
+import { getRewards, getPerkState } from '../lib/rewards'
+import { calcStreak, countDaysGoalMet } from '../lib/streak'
 import { supabase, isSupabaseEnabled } from '../lib/supabase'
-import { localDay, daysBetween } from '../lib/date'
+import { localDay } from '../lib/date'
 import { useAuth } from './AuthContext'
 
 const AppContext = createContext()
@@ -16,51 +18,6 @@ const DEFAULT_PROFILE = {
 
 function getToday() {
   return localDay()
-}
-
-function calcStreak(logs) {
-  if (logs.length === 0) return { current: 0, longest: 0 }
-
-  const days = new Set(logs.map(l => localDay(l.timestamp)))
-  const sorted = [...days].sort().reverse()
-
-  const today = getToday()
-  const yesterday = localDay(new Date(Date.now() - 86400000))
-
-  if (!days.has(today) && !days.has(yesterday)) return { current: 0, longest: calcLongest(sorted) }
-
-  let current = 0
-  let cursor = days.has(today) ? new Date() : new Date(Date.now() - 86400000)
-
-  while (days.has(localDay(cursor))) {
-    current++
-    cursor = new Date(cursor.getTime() - 86400000)
-  }
-
-  return { current, longest: Math.max(current, calcLongest(sorted)) }
-}
-
-function calcLongest(sortedDays) {
-  let longest = 0
-  let run = 1
-  for (let i = 1; i < sortedDays.length; i++) {
-    if (daysBetween(sortedDays[i - 1], sortedDays[i]) === 1) {
-      run++
-    } else {
-      longest = Math.max(longest, run)
-      run = 1
-    }
-  }
-  return Math.max(longest, run)
-}
-
-function countDaysGoalMet(logs, dailyGoal) {
-  const counts = {}
-  for (const log of logs) {
-    const day = localDay(log.timestamp)
-    counts[day] = (counts[day] || 0) + (log.count || 1)
-  }
-  return Object.values(counts).filter(c => c >= dailyGoal).length
 }
 
 function mapRow(r) {
@@ -210,7 +167,9 @@ export function AppProvider({ children }) {
     const daysGoalMet = countDaysGoalMet(logs, profile.dailyGoal)
     const badges = checkBadges(totalBottles, streak.current, daysGoalMet)
     const impact = calcImpact(totalBottles)
-    return { totalBottles, todayCount, streak, daysGoalMet, badges, impact }
+    const rewards = getRewards(totalBottles, badges.filter(b => b.unlocked).length, daysGoalMet)
+    const perks = getPerkState(rewards.level.levelNumber)
+    return { totalBottles, todayCount, streak, daysGoalMet, badges, impact, rewards, perks }
   }, [logs, profile.dailyGoal])
 
   return (

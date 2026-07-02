@@ -5,10 +5,11 @@ import { haptic } from '../lib/motion'
 import Icon from './Icon'
 
 export default function BottleButton({ source = 'home' }) {
-  const { logBottle, removeLog, todayCount, profile } = useApp()
+  const { logBottle, removeLog, todayCount, profile, perks } = useApp()
   const { toast } = useToast()
   const [pop, setPop] = useState(false)
   const [ripples, setRipples] = useState([])
+  const gold = perks.goldenButton
 
   const pct = Math.min(todayCount / profile.dailyGoal, 1)
   const goalMet = todayCount >= profile.dailyGoal
@@ -54,15 +55,19 @@ export default function BottleButton({ source = 'home' }) {
           onClick={handleLog}
           aria-label="Log a saved bottle"
           style={{
-            background: 'linear-gradient(155deg, color-mix(in srgb, var(--c-accent) 92%, white), var(--c-accent-dark))',
-            boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.28), inset 0 -2px 6px rgba(0,0,0,0.12), 0 14px 30px -12px color-mix(in srgb, var(--c-accent) 70%, transparent)',
+            background: gold
+              ? 'linear-gradient(155deg, #f8d75c, #dca10e)'
+              : 'linear-gradient(155deg, color-mix(in srgb, var(--c-accent) 92%, white), var(--c-accent-dark))',
+            boxShadow: gold
+              ? 'inset 0 1px 0 rgba(255,255,255,0.45), inset 0 -2px 6px rgba(120,80,0,0.2), 0 14px 30px -12px rgba(220,161,14,0.75)'
+              : 'inset 0 1px 0 rgba(255,255,255,0.28), inset 0 -2px 6px rgba(0,0,0,0.12), 0 14px 30px -12px color-mix(in srgb, var(--c-accent) 70%, transparent)',
           }}
-          className={`absolute inset-6 z-10 rounded-full text-white flex flex-col items-center justify-center
+          className={`absolute inset-6 z-10 rounded-full flex flex-col items-center justify-center
             hover:brightness-[1.04] active:scale-[0.96] transition-[transform,filter] duration-150 cursor-pointer
-            ${pop ? 'btn-pop' : ''}`}
+            ${gold ? 'text-[#4d3a00]' : 'text-white'} ${pop ? 'btn-pop' : ''}`}
         >
           <Icon name="plus" size={24} stroke={2.6} />
-          <span className="text-[10px] font-semibold mt-1 tracking-[0.14em] text-white/90">LOG BOTTLE</span>
+          <span className={`text-[10px] font-semibold mt-1 tracking-[0.14em] ${gold ? 'text-[#4d3a00]/90' : 'text-white/90'}`}>LOG BOTTLE</span>
         </button>
       </div>
 

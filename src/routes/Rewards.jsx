@@ -3,12 +3,12 @@ import PageHeader from '../components/PageHeader'
 import BadgeCard from '../components/BadgeCard'
 import Icon from '../components/Icon'
 import EmptyState from '../components/EmptyState'
-import { getRewards, PERKS, POINTS } from '../lib/rewards'
+import { PERKS, POINTS } from '../lib/rewards'
 
 export default function Rewards() {
-  const { totalBottles, badges, daysGoalMet } = useApp()
+  const { badges, rewards, perks } = useApp()
   const unlocked = badges.filter(b => b.unlocked)
-  const { points, level } = getRewards(totalBottles, unlocked.length, daysGoalMet)
+  const { points, level } = rewards
 
   const R = 26
   const C = 2 * Math.PI * R
@@ -31,7 +31,14 @@ export default function Rewards() {
           </div>
           <div className="flex-1 min-w-0">
             <p className="text-xs font-medium text-faint">Level {level.levelNumber}</p>
-            <p className="text-lg font-bold text-ink leading-tight">{level.name}</p>
+            <p className="text-lg font-bold text-ink leading-tight flex items-center gap-2">
+              {level.name}
+              {perks.title && (
+                <span className="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wide text-amber-600 bg-amber-400/15 border border-amber-400/40 rounded-full px-2 py-0.5">
+                  <Icon name="sparkle" size={10} stroke={2.6} /> {perks.title}
+                </span>
+              )}
+            </p>
             <p className="text-[13px] text-muted mt-0.5">
               {level.next
                 ? <><span className="font-semibold text-ink tabular-nums">{level.pointsToNext.toLocaleString()}</span> pts to {level.next.name}</>

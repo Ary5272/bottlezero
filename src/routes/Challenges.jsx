@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '../state/AuthContext'
+import { useApp } from '../state/AppContext'
 import { supabase } from '../lib/supabase'
 import { shareContent } from '../lib/share'
 import PageHeader from '../components/PageHeader'
@@ -13,6 +14,7 @@ function randomCode() {
 
 export default function Challenges() {
   const { user, isSupabaseEnabled } = useAuth()
+  const { profile, perks } = useApp()
   const [challenges, setChallenges] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
@@ -157,7 +159,12 @@ export default function Challenges() {
                       <span className="text-xs w-5 text-center font-semibold text-faint tabular-nums">
                         {['🥇','🥈','🥉'][i] || i + 1}
                       </span>
-                      <span className="text-[13px] flex-1 truncate text-ink">{row.name || 'Anonymous'}</span>
+                      <span className="text-[13px] flex-1 truncate text-ink flex items-center gap-1.5">
+                        {row.name || 'Anonymous'}
+                        {perks.leaderboardFlair && row.name && row.name === profile.name && (
+                          <Icon name="leaf" size={12} stroke={2.4} className="text-accent shrink-0" />
+                        )}
+                      </span>
                       <span className="text-[13px] font-semibold text-accent tabular-nums">{row.bottles}</span>
                     </div>
                   ))}

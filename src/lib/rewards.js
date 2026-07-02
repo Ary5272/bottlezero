@@ -58,3 +58,12 @@ export function getRewards(totalBottles, unlockedBadges, daysGoalMet) {
   const points = calcPoints(totalBottles, unlockedBadges, daysGoalMet)
   return { points, level: getLevel(points) }
 }
+
+export function getPerkState(levelNumber) {
+  return {
+    sproutFrame: levelNumber >= 2,
+    goldenButton: levelNumber >= 4,
+    leaderboardFlair: levelNumber >= 5,
+    title: levelNumber >= 7 ? 'Guardian' : levelNumber >= 6 ? 'Forest Founder' : null,
+  }
+}

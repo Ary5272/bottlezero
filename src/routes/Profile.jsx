@@ -10,7 +10,7 @@ import { save } from '../lib/storage'
 import { localDay } from '../lib/date'
 
 export default function Profile() {
-  const { profile, updateProfile, resetData, totalBottles, streak, impact, cloud, syncing, logs } = useApp()
+  const { profile, updateProfile, resetData, totalBottles, streak, impact, cloud, syncing, logs, perks } = useApp()
   const { user, signOut, isSupabaseEnabled } = useAuth()
   const { settings: reminder, permission, supported, enable, disable, setTime } = useReminders()
   const navigate = useNavigate()
@@ -74,7 +74,13 @@ export default function Profile() {
         {cloud ? (
           <div className="flex items-center justify-between gap-3">
             <div className="flex items-center gap-3 min-w-0">
-              <span className="grid place-items-center w-10 h-10 rounded-full bg-accent-soft text-accent shrink-0">
+              <span className={`grid place-items-center w-10 h-10 rounded-full bg-accent-soft text-accent shrink-0 ${
+                perks.title === 'Guardian'
+                  ? 'ring-2 ring-amber-400 ring-offset-2 ring-offset-surface'
+                  : perks.sproutFrame
+                    ? 'ring-2 ring-accent ring-offset-2 ring-offset-surface'
+                    : ''
+              }`}>
                 <Icon name="user" size={20} />
               </span>
               <div className="min-w-0">
@@ -83,6 +89,11 @@ export default function Profile() {
                   <Icon name="check" size={12} stroke={2.4} />
                   {syncing ? 'Syncing…' : 'Synced to cloud'}
                 </p>
+                {perks.title && (
+                  <p className="text-[11px] font-semibold text-amber-500 flex items-center gap-1 mt-0.5">
+                    <Icon name="sparkle" size={11} stroke={2.4} /> {perks.title}
+                  </p>
+                )}
               </div>
             </div>
             <button onClick={() => signOut()}
