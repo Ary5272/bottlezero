@@ -215,3 +215,29 @@ environment variables in the Vercel project. Live at https://bottlezero.vercel.a
 Possible future ideas: always-on push reminders even when the app is closed (needs a small
 server / Supabase Edge Function with Web Push), more partner data, real-world rewards via brand
 partnerships.
+
+---
+
+## 11. Security posture
+
+All tables are protected with Postgres Row Level Security: users can only read and write
+their own rows. Cross-user reads happen exclusively through two deliberately narrow
+`SECURITY DEFINER` functions, both with a pinned `search_path`:
+
+- **`community_stats()`** — callable by anyone, including signed-out visitors, on purpose.
+  It returns exactly two aggregate numbers (total bottles, total members) and no
+  row-level or personal data. This powers the public community counter.
+- **`get_challenge_leaderboard(code)`** — callable by signed-in users only. It verifies
+  the caller is a member of the challenge before returning names and totals, and raises
+  an exception otherwise.
+
+The `handle_new_user()` trigger function is not executable by any API role; only the
+database invokes it. Supabase's security linter intentionally flags every publicly
+callable `SECURITY DEFINER` function so developers confirm the exposure is deliberate —
+for the two functions above, it is, for the reasons stated. Leaked-password protection
+(HaveIBeenPwned checks) is a Supabase Pro feature and is not enabled on the free plan.
+
+Anon keys are public by design (they ship in the client bundle); real protection comes
+from RLS. The Android release signing keystore and `.env` secrets are git-ignored and
+never committed. A daily GitHub Actions ping keeps the free-tier project from being
+auto-paused for inactivity.
