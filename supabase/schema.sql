@@ -64,6 +64,7 @@ create policy "own logs delete" on public.bottle_logs for delete using (auth.uid
 
 create policy "challenges select" on public.challenges for select using (auth.role() = 'authenticated');
 create policy "challenges insert" on public.challenges for insert with check (auth.uid() = created_by);
+create policy "challenges delete own" on public.challenges for delete using (auth.uid() = created_by);
 
 create policy "members select own" on public.challenge_members for select using (auth.uid() = user_id);
 create policy "members insert own" on public.challenge_members for insert with check (auth.uid() = user_id);

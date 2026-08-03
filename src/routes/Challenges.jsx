@@ -22,6 +22,8 @@ export default function Challenges() {
   const [newGoal, setNewGoal] = useState(100)
   const [joinCode, setJoinCode] = useState('')
   const [boards, setBoards] = useState({})
+  const [confirmId, setConfirmId] = useState(null)
+  const [busyId, setBusyId] = useState(null)
 
   const loadChallenges = useCallback(async () => {
     if (!user) return
@@ -64,6 +66,24 @@ export default function Challenges() {
   async function loadLeaderboard(code) {
     const { data, error } = await supabase.rpc('get_challenge_leaderboard', { p_code: code })
     if (!error) setBoards(prev => ({ ...prev, [code]: data || [] }))
+  }
+
+  async function deleteChallenge(ch) {
+    setError(''); setBusyId(ch.id)
+    const { error } = await supabase.from('challenges').delete().eq('id', ch.id)
+    setBusyId(null); setConfirmId(null)
+    if (error) { setError(error.message); return }
+    setChallenges(prev => prev.filter(c => c.id !== ch.id))
+  }
+
+  async function leaveChallenge(ch) {
+    setError(''); setBusyId(ch.id)
+    const { error } = await supabase
+      .from('challenge_members').delete()
+      .eq('challenge_id', ch.id).eq('user_id', user.id)
+    setBusyId(null); setConfirmId(null)
+    if (error) { setError(error.message); return }
+    setChallenges(prev => prev.filter(c => c.id !== ch.id))
   }
 
   async function shareCode(ch) {
@@ -127,11 +147,17 @@ export default function Challenges() {
         {challenges.map(ch => {
           const board = boards[ch.code]
           const teamTotal = board ? board.reduce((s, r) => s + Number(r.bottles), 0) : 0
+          const isOwner = ch.created_by === user.id
           return (
             <div key={ch.id} className="bg-surface rounded-2xl border border-line p-4">
               <div className="flex justify-between items-start gap-3">
                 <div className="min-w-0">
-                  <h3 className="font-semibold text-ink leading-tight">{ch.name}</h3>
+                  <h3 className="font-semibold text-ink leading-tight flex items-center gap-2">
+                    {ch.name}
+                    {isOwner && (
+                      <span className="text-[10px] font-medium text-accent bg-accent-soft rounded-full px-2 py-0.5 shrink-0">Owner</span>
+                    )}
+                  </h3>
                   <p className="text-xs text-faint mt-0.5">Goal: {ch.goal} bottles</p>
                 </div>
                 <div className="text-right shrink-0">
@@ -175,6 +201,32 @@ export default function Challenges() {
                   <p className="text-[11px] text-faint mt-1 text-center tabular-nums">{teamTotal} / {ch.goal} team total</p>
                 </div>
               )}
+
+              <div className="mt-3 pt-3 border-t border-line">
+                {confirmId === ch.id ? (
+                  <div className="flex items-center justify-between gap-2">
+                    <p className="text-[12px] text-muted">
+                      {isOwner ? 'Delete this challenge for everyone?' : 'Leave this challenge?'}
+                    </p>
+                    <div className="flex gap-2 shrink-0">
+                      <button
+                        onClick={() => (isOwner ? deleteChallenge(ch) : leaveChallenge(ch))}
+                        disabled={busyId === ch.id}
+                        className="bg-warn text-white px-3 py-1.5 rounded-lg text-[12px] font-medium cursor-pointer disabled:opacity-50">
+                        {busyId === ch.id ? '…' : isOwner ? 'Delete' : 'Leave'}
+                      </button>
+                      <button onClick={() => setConfirmId(null)}
+                        className="text-[12px] text-muted hover:text-ink px-2 cursor-pointer">Cancel</button>
+                    </div>
+                  </div>
+                ) : (
+                  <button onClick={() => setConfirmId(ch.id)}
+                    className="inline-flex items-center gap-1.5 text-[12px] text-faint hover:text-warn cursor-pointer">
+                    <Icon name={isOwner ? 'trash' : 'logout'} size={13} />
+                    {isOwner ? 'Delete challenge' : 'Leave challenge'}
+                  </button>
+                )}
+              </div>
             </div>
           )
         })}
