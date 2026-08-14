@@ -6,6 +6,7 @@ export const routeImporters = {
   '/learn': () => import('../routes/Learn'),
   '/profile': () => import('../routes/Profile'),
   '/about': () => import('../routes/About'),
+  '/privacy': () => import('../routes/Privacy'),
   '/auth': () => import('../routes/Auth'),
 }
 

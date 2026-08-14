@@ -20,6 +20,7 @@ const Insights = lazy(routeImporters['/insights'])
 const Learn = lazy(routeImporters['/learn'])
 const Profile = lazy(routeImporters['/profile'])
 const About = lazy(routeImporters['/about'])
+const Privacy = lazy(routeImporters['/privacy'])
 const Challenges = lazy(routeImporters['/challenges'])
 const Auth = lazy(routeImporters['/auth'])
 
@@ -51,6 +52,7 @@ function NotFound() {
 export default function App() {
   const { pathname } = useLocation()
   const chromeless = pathname === '/auth'
+  const publicRoute = pathname === '/privacy'
   const [onboarding, setOnboarding] = useState(needsOnboarding())
   const [showInstall, setShowInstall] = useState(false)
 
@@ -76,7 +78,7 @@ export default function App() {
     setShowInstall(false)
   }
 
-  if (onboarding) return <Onboarding onDone={finishOnboarding} />
+  if (onboarding && !publicRoute) return <Onboarding onDone={finishOnboarding} />
 
   return (
     <>
@@ -97,6 +99,7 @@ export default function App() {
                 <Route path="/learn" element={<Learn />} />
                 <Route path="/profile" element={<Profile />} />
                 <Route path="/about" element={<About />} />
+                <Route path="/privacy" element={<Privacy />} />
                 <Route path="/auth" element={<Auth />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>

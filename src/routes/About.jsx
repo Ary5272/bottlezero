@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import PageHeader from '../components/PageHeader'
 
 const NUMBERS = [
@@ -42,6 +43,9 @@ export default function About() {
           Your data stays on your device unless you create an account to sync it. Location is used
           only to find nearby refill points — it's never stored or shared.
         </p>
+        <Link to="/privacy" className="text-[13px] font-medium text-accent hover:underline">
+          Read the full privacy policy →
+        </Link>
       </section>
 
       <p className="text-center text-[11px] text-faint">BottleZero · React · OpenStreetMap · Supabase · Python · PWA</p>
