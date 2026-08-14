@@ -3,10 +3,26 @@ import PageHeader from '../components/PageHeader'
 export default function DeleteAccount() {
   return (
     <div className="max-w-xl mx-auto px-4 py-5 pb-10 flex flex-col gap-5">
-      <PageHeader title="Delete Your Account" subtitle="BottleZero, by Ary5272" />
+      <PageHeader title="Delete Your Data or Account" subtitle="BottleZero, by Ary5272" />
 
       <section className="bg-surface rounded-2xl border border-line p-4 flex flex-col gap-2.5">
-        <h2 className="text-sm font-semibold text-ink">How to request deletion</h2>
+        <h2 className="text-sm font-semibold text-ink">Delete some data, keep your account</h2>
+        <p className="text-[13px] text-muted leading-relaxed">
+          You don't need to delete your whole account to clear your data — this works instantly,
+          with no waiting period and no email required.
+        </p>
+        <ol className="text-[13px] text-muted leading-relaxed list-decimal pl-4 flex flex-col gap-1.5">
+          <li>Open BottleZero and go to the <strong className="text-ink font-medium">Profile</strong> tab.</li>
+          <li>Scroll to the bottom and tap <strong className="text-ink font-medium">Reset all data</strong>, then confirm.</li>
+          <li>
+            This immediately and permanently deletes every bottle you've logged from our database.
+            Your account, email, display name, and daily goal setting are kept and unaffected.
+          </li>
+        </ol>
+      </section>
+
+      <section className="bg-surface rounded-2xl border border-line p-4 flex flex-col gap-2.5">
+        <h2 className="text-sm font-semibold text-ink">Delete your entire account</h2>
         <ol className="text-[13px] text-muted leading-relaxed list-decimal pl-4 flex flex-col gap-1.5">
           <li>
             Email{' '}
