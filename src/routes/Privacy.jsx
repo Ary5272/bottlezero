@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import PageHeader from '../components/PageHeader'
 
 export default function Privacy() {
@@ -49,10 +50,9 @@ export default function Privacy() {
         <h2 className="text-sm font-semibold text-ink">Your choices</h2>
         <p className="text-[13px] text-muted leading-relaxed">
           You can export a copy of your data at any time from Profile → Export my data. Profile →
-          Reset all data permanently deletes your logs and stats. To fully delete your account and
-          email from BottleZero's database, email{' '}
-          <a href="mailto:sairam@raasailabs.com" className="text-accent font-medium">sairam@raasailabs.com</a>{' '}
-          and it will be removed.
+          Reset all data permanently deletes your logs and stats. To fully delete your account,
+          see the{' '}
+          <Link to="/delete-account" className="text-accent font-medium">account deletion instructions</Link>.
         </p>
       </section>
 

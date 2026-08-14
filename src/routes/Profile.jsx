@@ -195,6 +195,8 @@ export default function Profile() {
         <RowLink to="/insights" icon="chart" label="Dashboard" />
         <RowLink to="/learn" icon="book" label="Learn" />
         <RowLink to="/about" icon="leaf" label="About & impact sources" />
+        <RowLink to="/privacy" icon="lock" label="Privacy policy" />
+        <RowLink to="/delete-account" icon="trash" label="Delete my account" />
         <RowButton icon="download" label="Export my data" onClick={exportData} />
         <RowButton icon="refresh" label="Replay the tour" onClick={replayTour} />
       </section>

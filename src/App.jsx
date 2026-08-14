@@ -21,6 +21,7 @@ const Learn = lazy(routeImporters['/learn'])
 const Profile = lazy(routeImporters['/profile'])
 const About = lazy(routeImporters['/about'])
 const Privacy = lazy(routeImporters['/privacy'])
+const DeleteAccount = lazy(routeImporters['/delete-account'])
 const Challenges = lazy(routeImporters['/challenges'])
 const Auth = lazy(routeImporters['/auth'])
 
@@ -52,7 +53,7 @@ function NotFound() {
 export default function App() {
   const { pathname } = useLocation()
   const chromeless = pathname === '/auth'
-  const publicRoute = pathname === '/privacy'
+  const publicRoute = pathname === '/privacy' || pathname === '/delete-account'
   const [onboarding, setOnboarding] = useState(needsOnboarding())
   const [showInstall, setShowInstall] = useState(false)
 
@@ -100,6 +101,7 @@ export default function App() {
                 <Route path="/profile" element={<Profile />} />
                 <Route path="/about" element={<About />} />
                 <Route path="/privacy" element={<Privacy />} />
+                <Route path="/delete-account" element={<DeleteAccount />} />
                 <Route path="/auth" element={<Auth />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
