@@ -11,7 +11,7 @@ export default function Privacy() {
         <p className="text-[13px] text-muted leading-relaxed">
           BottleZero is an independent student project built for the Congressional App Challenge.
           It is not affiliated with any company. Questions about your data can be sent to{' '}
-          <a href="mailto:sairam@raasailabs.com" className="text-accent font-medium">sairam@raasailabs.com</a>.
+          <a href="mailto:sim89892@gmail.com" className="text-accent font-medium">sim89892@gmail.com</a>.
         </p>
       </section>
 

@@ -26,8 +26,8 @@ export default function DeleteAccount() {
         <ol className="text-[13px] text-muted leading-relaxed list-decimal pl-4 flex flex-col gap-1.5">
           <li>
             Email{' '}
-            <a href="mailto:sairam@raasailabs.com?subject=Delete%20my%20BottleZero%20account" className="text-accent font-medium">
-              sairam@raasailabs.com
+            <a href="mailto:sim89892@gmail.com?subject=Delete%20my%20BottleZero%20account" className="text-accent font-medium">
+              sim89892@gmail.com
             </a>{' '}
             from the email address on your BottleZero account, with the subject line "Delete my account."
           </li>

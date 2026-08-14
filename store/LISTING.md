@@ -28,7 +28,7 @@ BottleZero was built as a solo student project for the Congressional App Challen
 Lifestyle
 
 ## Contact email
-sairam@raasailabs.com
+sim89892@gmail.com
 
 ## Privacy policy URL
 https://bottlezero.vercel.app/privacy
