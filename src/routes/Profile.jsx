@@ -3,16 +3,17 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useApp } from '../state/AppContext'
 import { useAuth } from '../state/AuthContext'
 import { useReminders } from '../state/ReminderContext'
+import { useTour } from '../state/TourContext'
 import PageHeader from '../components/PageHeader'
 import Icon from '../components/Icon'
 import ThemeToggle from '../components/ThemeToggle'
-import { save } from '../lib/storage'
 import { localDay } from '../lib/date'
 
 export default function Profile() {
   const { profile, updateProfile, resetData, totalBottles, streak, impact, cloud, syncing, logs, perks } = useApp()
   const { user, signOut, isSupabaseEnabled } = useAuth()
   const { settings: reminder, permission, supported, enable, disable, setTime } = useReminders()
+  const { replayTour } = useTour()
   const navigate = useNavigate()
 
   async function toggleReminder() {
@@ -59,11 +60,6 @@ export default function Profile() {
     a.click()
     a.remove()
     URL.revokeObjectURL(url)
-  }
-
-  function replayTour() {
-    save('onboarded', false)
-    window.location.assign('/')
   }
 
   function rateApp() {

@@ -8,6 +8,7 @@ import InstallModal from './components/InstallModal'
 import RecoveryModal from './components/RecoveryModal'
 import ErrorBoundary from './components/ErrorBoundary'
 import Onboarding, { needsOnboarding } from './components/Onboarding'
+import TourOverlay from './components/TourOverlay'
 import Icon from './components/Icon'
 import Dashboard from './routes/Dashboard'
 import { routeImporters, prefetchAll } from './lib/prefetch'
@@ -114,6 +115,7 @@ export default function App() {
       {!chromeless && <HabitReminders />}
       {showInstall && <InstallModal onClose={closeInstall} />}
       <RecoveryModal />
+      <TourOverlay />
     </>
   )
 }

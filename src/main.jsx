@@ -6,6 +6,7 @@ import { AuthProvider } from './state/AuthContext'
 import { AppProvider } from './state/AppContext'
 import { ToastProvider } from './state/ToastContext'
 import { ReminderProvider } from './state/ReminderContext'
+import { TourProvider } from './state/TourContext'
 import './lib/pwa'
 import { initNativeStatusBar } from './lib/native'
 import './index.css'
@@ -21,7 +22,9 @@ createRoot(document.getElementById('root')).render(
           <AppProvider>
             <ToastProvider>
               <ReminderProvider>
-                <App />
+                <TourProvider>
+                  <App />
+                </TourProvider>
               </ReminderProvider>
             </ToastProvider>
           </AppProvider>
