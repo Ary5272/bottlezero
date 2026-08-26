@@ -66,6 +66,10 @@ export default function Profile() {
     window.location.assign('/')
   }
 
+  function rateApp() {
+    window.open('https://play.google.com/store/apps/details?id=com.bottlezero.app', '_blank', 'noopener')
+  }
+
   return (
     <div className="max-w-xl mx-auto px-4 py-5 pb-8 flex flex-col gap-5">
       <PageHeader title="Profile" />
@@ -197,6 +201,7 @@ export default function Profile() {
         <RowLink to="/about" icon="leaf" label="About & impact sources" />
         <RowLink to="/privacy" icon="lock" label="Privacy policy" />
         <RowLink to="/delete-account" icon="trash" label="Delete my account" />
+        <RowButton icon="sparkle" label="Rate BottleZero" onClick={rateApp} />
         <RowButton icon="download" label="Export my data" onClick={exportData} />
         <RowButton icon="refresh" label="Replay the tour" onClick={replayTour} />
       </section>
