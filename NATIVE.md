@@ -26,17 +26,37 @@ App id: `com.bottlezero.app` · App name: BottleZero · Icon/splash generated fr
 
 ## iOS  (requires a Mac — cannot be built on Windows)
 
-Apple only allows building iOS apps on macOS with Xcode. Everything is configured;
-on a Mac just run:
+Apple only allows building iOS apps on macOS with Xcode. One command sets it all up:
 
 ```bash
-npm install
-npm run build
-npx cap add ios      # creates the ios/ project (Mac only)
-npx cap open ios     # opens Xcode
+bash scripts/ios-setup.sh
 ```
 
-Then Run in Xcode. To publish: an **Apple Developer account** is **$99/year**.
+It checks Xcode and Node, builds the web app, creates `ios/` (Swift Package Manager,
+so no CocoaPods), syncs, adds the location-permission message the map needs, generates
+the icon and splash, and opens Xcode. Then in Xcode: **App** → **Signing & Capabilities**
+→ **Team** → sign in with an Apple ID → pick an iPhone simulator → **Run**.
+
+Once it runs, commit `ios/` and push so the project is saved. After any later code
+change on the Mac: `npm run build && npx cap sync ios`.
+
+### On a real iPhone
+
+A free Apple ID can install the app on your own iPhone over USB (it stops opening
+after 7 days and needs reinstalling). Publishing needs the **Apple Developer Program**,
+**$99/year**, and Apple requires the account holder to be 18+, so a parent holds it.
+
+### Check before submitting to the App Store
+
+- **Account deletion.** Apple requires any app that creates accounts to let people
+  delete their account from inside the app. The current Delete Account page asks
+  people to email instead, which Apple is likely to reject. Build a real in-app
+  delete first.
+- **Export my data** and the **share card** fall back to browser downloads, which may
+  not work inside the iOS app. Test both on a simulator.
+- **The map's location prompt** should show "BottleZero uses your location…". If the
+  app crashes when the map opens, the `Info.plist` step in the setup script didn't run.
+- The **Rate BottleZero** button only appears on Android, since it links to Google Play.
 
 ## Regenerate icons / splash
 

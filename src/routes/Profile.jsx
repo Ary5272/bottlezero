@@ -62,6 +62,8 @@ export default function Profile() {
     URL.revokeObjectURL(url)
   }
 
+  const canRate = window.Capacitor?.getPlatform?.() === 'android'
+
   function rateApp() {
     window.open('https://play.google.com/store/apps/details?id=com.bottlezero.app', '_blank', 'noopener')
   }
@@ -197,7 +199,7 @@ export default function Profile() {
         <RowLink to="/about" icon="leaf" label="About & impact sources" />
         <RowLink to="/privacy" icon="lock" label="Privacy policy" />
         <RowLink to="/delete-account" icon="trash" label="Delete my account" />
-        <RowButton icon="sparkle" label="Rate BottleZero" onClick={rateApp} />
+        {canRate && <RowButton icon="sparkle" label="Rate BottleZero" onClick={rateApp} />}
         <RowButton icon="download" label="Export my data" onClick={exportData} />
         <RowButton icon="refresh" label="Replay the tour" onClick={replayTour} />
       </section>
