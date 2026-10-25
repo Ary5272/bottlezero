@@ -110,3 +110,19 @@ revoke execute on function public.get_challenge_leaderboard(text) from public, a
 grant execute on function public.get_challenge_leaderboard(text) to authenticated;
 
 revoke execute on function public.handle_new_user() from public, anon, authenticated;
+
+create or replace function public.delete_my_account()
+returns void
+language plpgsql
+security definer set search_path = public
+as $$
+begin
+  if auth.uid() is null then
+    raise exception 'Not signed in';
+  end if;
+  delete from auth.users where id = auth.uid();
+end;
+$$;
+
+revoke execute on function public.delete_my_account() from public, anon;
+grant execute on function public.delete_my_account() to authenticated;

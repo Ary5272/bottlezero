@@ -48,10 +48,11 @@ after 7 days and needs reinstalling). Publishing needs the **Apple Developer Pro
 
 ### Check before submitting to the App Store
 
-- **Account deletion.** Apple requires any app that creates accounts to let people
-  delete their account from inside the app. The current Delete Account page asks
-  people to email instead, which Apple is likely to reject. Build a real in-app
-  delete first.
+- **Account deletion** is built in (Profile → Delete my account), which Apple requires
+  for any app that creates accounts. It calls the `delete_my_account()` database
+  function in `supabase/schema.sql`, which must exist in the live Supabase project.
+- **Demo account.** App Review signs in to test the app, so make a throwaway account
+  and put its email and password in the review notes in App Store Connect.
 - **Export my data** and the **share card** fall back to browser downloads, which may
   not work inside the iOS app. Test both on a simulator.
 - **The map's location prompt** should show "BottleZero uses your location…". If the

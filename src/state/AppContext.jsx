@@ -146,15 +146,19 @@ export function AppProvider({ children }) {
     }
   }
 
+  function clearDeviceData() {
+    setLogs([])
+    setProfile({ ...DEFAULT_PROFILE })
+    save('logs', [])
+    save('profile', { ...DEFAULT_PROFILE })
+  }
+
   async function resetData() {
     if (cloud) {
       await supabase.from('bottle_logs').delete().eq('user_id', user.id)
       setLogs([])
     } else {
-      setLogs([])
-      setProfile({ ...DEFAULT_PROFILE })
-      save('logs', [])
-      save('profile', { ...DEFAULT_PROFILE })
+      clearDeviceData()
     }
   }
 
@@ -176,7 +180,7 @@ export function AppProvider({ children }) {
     <AppContext.Provider value={{
       profile, logs, ...derived,
       cloud, syncing,
-      logBottle, removeLog, updateProfile, resetData,
+      logBottle, removeLog, updateProfile, resetData, clearDeviceData,
     }}>
       {children}
     </AppContext.Provider>

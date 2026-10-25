@@ -62,9 +62,16 @@ export function AuthProvider({ children }) {
     setRecovering(false)
   }, [])
 
+  const deleteAccount = useCallback(async () => {
+    if (!isSupabaseEnabled) throw new Error('Cloud sync isn\'t set up yet.')
+    const { error } = await supabase.rpc('delete_my_account')
+    if (error) throw error
+    await supabase.auth.signOut({ scope: 'local' })
+  }, [])
+
   const value = useMemo(
-    () => ({ user, loading, isSupabaseEnabled, recovering, signUp, signIn, signOut, resetPassword, updatePassword, dismissRecovery: () => setRecovering(false) }),
-    [user, loading, recovering, signUp, signIn, signOut, resetPassword, updatePassword]
+    () => ({ user, loading, isSupabaseEnabled, recovering, signUp, signIn, signOut, resetPassword, updatePassword, deleteAccount, dismissRecovery: () => setRecovering(false) }),
+    [user, loading, recovering, signUp, signIn, signOut, resetPassword, updatePassword, deleteAccount]
   )
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
