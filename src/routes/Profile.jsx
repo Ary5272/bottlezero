@@ -8,6 +8,7 @@ import PageHeader from '../components/PageHeader'
 import Icon from '../components/Icon'
 import ThemeToggle from '../components/ThemeToggle'
 import { localDay } from '../lib/date'
+import { fetchMyRatings } from '../lib/ratings'
 
 export default function Profile() {
   const { profile, updateProfile, resetData, totalBottles, streak, impact, cloud, syncing, logs, perks } = useApp()
@@ -37,7 +38,8 @@ export default function Profile() {
     setTimeout(() => setSaved(false), 2000)
   }
 
-  function exportData() {
+  async function exportData() {
+    const ratings = cloud ? await fetchMyRatings(user.id) : {}
     const data = {
       app: 'BottleZero',
       exportedAt: new Date().toISOString(),
@@ -50,6 +52,7 @@ export default function Profile() {
         longestStreakDays: streak.longest,
       },
       logs: logs.map(l => ({ count: l.count, source: l.source, timestamp: l.timestamp })),
+      fountainRatings: Object.entries(ratings).map(([fountainId, r]) => ({ fountainId, ...r })),
     }
     const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' })
     const url = URL.createObjectURL(blob)

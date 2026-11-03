@@ -4,7 +4,7 @@ import PageHeader from '../components/PageHeader'
 export default function Privacy() {
   return (
     <div className="max-w-xl mx-auto px-4 py-5 pb-10 flex flex-col gap-5">
-      <PageHeader title="Privacy Policy" subtitle="Last updated August 2026" />
+      <PageHeader title="Privacy Policy" subtitle="Last updated November 2026" />
 
       <section className="bg-surface rounded-2xl border border-line p-4 flex flex-col gap-2.5">
         <h2 className="text-sm font-semibold text-ink">Who this is</h2>
@@ -23,7 +23,10 @@ export default function Privacy() {
           an optional display name, your daily goal, and the bottles you log (a count, a source
           like "fountain" or "store," and a timestamp) in a Supabase database so your progress can
           sync across devices. If you create or join a friend challenge, the challenge name, join
-          code, and your membership in it are stored as well.
+          code, and your membership in it are stored as well. If you rate a water fountain, your
+          rating (whether it works and whether you'd drink from it) is saved to your account so you
+          can change it later. Other people only ever see the totals for each fountain, never who
+          rated it.
         </p>
       </section>
 

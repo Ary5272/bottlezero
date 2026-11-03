@@ -1,4 +1,4 @@
-import MapView, { TYPE_COLORS, TYPE_LABELS } from '../components/MapView'
+import MapView, { TYPE_COLORS, TYPE_LABELS, BROKEN_COLOR } from '../components/MapView'
 import PageHeader from '../components/PageHeader'
 import Icon from '../components/Icon'
 import partners from '../data/partners.json'
@@ -19,7 +19,12 @@ export default function Map() {
             {label}
           </span>
         ))}
+        <span className="inline-flex items-center gap-1.5 text-xs text-muted">
+          <span className="w-2.5 h-2.5 rounded-full" style={{ background: BROKEN_COLOR }} />
+          Reported broken
+        </span>
       </div>
+      <p className="text-xs text-faint -mt-3">Tap a fountain to see if it works, or rate it yourself.</p>
 
       <section>
         <h2 className="text-sm font-semibold text-ink mb-3">Partner spots</h2>

@@ -126,3 +126,74 @@ $$;
 
 revoke execute on function public.delete_my_account() from public, anon;
 grant execute on function public.delete_my_account() to authenticated;
+
+create table if not exists public.fountain_ratings (
+  fountain_id text not null check (fountain_id ~ '^(osm|seed)_[0-9]+$'),
+  user_id uuid references auth.users on delete cascade not null,
+  works boolean not null,
+  would_drink boolean,
+  updated_at timestamptz not null default now(),
+  primary key (fountain_id, user_id),
+  check (works or would_drink is null)
+);
+
+alter table public.fountain_ratings enable row level security;
+
+drop policy if exists "ratings select own" on public.fountain_ratings;
+drop policy if exists "ratings insert own" on public.fountain_ratings;
+drop policy if exists "ratings update own" on public.fountain_ratings;
+drop policy if exists "ratings delete own" on public.fountain_ratings;
+create policy "ratings select own" on public.fountain_ratings for select using (auth.uid() = user_id);
+create policy "ratings insert own" on public.fountain_ratings for insert with check (auth.uid() = user_id);
+create policy "ratings update own" on public.fountain_ratings for update using (auth.uid() = user_id) with check (auth.uid() = user_id);
+create policy "ratings delete own" on public.fountain_ratings for delete using (auth.uid() = user_id);
+
+create or replace function public.touch_fountain_rating()
+returns trigger
+language plpgsql
+set search_path = public
+as $$
+begin
+  new.updated_at := now();
+  return new;
+end;
+$$;
+
+drop trigger if exists fountain_ratings_touch on public.fountain_ratings;
+create trigger fountain_ratings_touch
+  before insert or update on public.fountain_ratings
+  for each row execute procedure public.touch_fountain_rating();
+
+revoke execute on function public.touch_fountain_rating() from public, anon, authenticated;
+
+create or replace function public.fountain_rating_summary(p_ids text[])
+returns table (
+  fountain_id text,
+  ratings bigint,
+  works_yes bigint,
+  works_no bigint,
+  drink_yes bigint,
+  drink_no bigint,
+  latest_works boolean,
+  last_rated timestamptz
+)
+language sql
+stable
+security definer set search_path = public
+as $$
+  select
+    r.fountain_id,
+    count(*),
+    count(*) filter (where r.works),
+    count(*) filter (where not r.works),
+    count(*) filter (where r.would_drink),
+    count(*) filter (where r.would_drink is false),
+    (array_agg(r.works order by r.updated_at desc))[1],
+    max(r.updated_at)
+  from public.fountain_ratings r
+  where r.fountain_id = any(p_ids) and cardinality(p_ids) <= 500
+  group by r.fountain_id;
+$$;
+
+revoke execute on function public.fountain_rating_summary(text[]) from public;
+grant execute on function public.fountain_rating_summary(text[]) to anon, authenticated;

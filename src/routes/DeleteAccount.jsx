@@ -49,8 +49,8 @@ export default function DeleteAccount() {
             {confirming ? (
               <div className="border border-warn/30 rounded-xl p-3 flex flex-col gap-2">
                 <p className="text-[13px] text-muted">
-                  This permanently deletes your account, every bottle you've logged, and any challenges
-                  you created. This can't be undone.
+                  This permanently deletes your account, every bottle you've logged, your fountain
+                  ratings, and any challenges you created. This can't be undone.
                 </p>
                 <div className="flex gap-2">
                   <button onClick={handleDelete} disabled={busy}
@@ -118,8 +118,8 @@ export default function DeleteAccount() {
         <h2 className="text-sm font-semibold text-ink">What gets deleted</h2>
         <p className="text-[13px] text-muted leading-relaxed">
           Your account, email address, display name, every bottle you've logged, your daily goal,
-          and any challenges you created or joined are permanently deleted from BottleZero's
-          database. This cannot be undone.
+          your fountain ratings, and any challenges you created or joined are permanently deleted
+          from BottleZero's database. This cannot be undone.
         </p>
       </section>
 
