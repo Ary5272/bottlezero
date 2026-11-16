@@ -14,7 +14,7 @@ npx cap sync         # copy it into android/ (and ios/ if added)
 
 ## Android  (works on Windows / Mac / Linux)
 
-The real Android project is in [`android/`](android/).
+The real Android project is in [`android/`](../android/).
 
 1. Install **Android Studio** (free): https://developer.android.com/studio
 2. Open the `android/` folder in Android Studio and let Gradle finish.

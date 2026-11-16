@@ -34,3 +34,6 @@ android/keystore.properties
 *.sw?
 
 .vercel
+
+Reports From TC/
+store/

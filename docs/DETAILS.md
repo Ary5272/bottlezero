@@ -12,7 +12,9 @@ refill, and turning it into a game with friends.
 
 - **Purpose:** Congressional App Challenge submission.
 - **Live app:** https://bottlezero.vercel.app
-- **Type:** Installable web app (PWA) — works on phones, tablets, and computers; no app store needed.
+- **Type:** Installable web app (PWA) that works on phones, tablets, and computers, plus an
+  Android app on [Google Play](https://play.google.com/store/apps/details?id=com.bottlezero.app)
+  built from the same code with Capacitor.
 - **Cost to run:** $0 — every service used has a free tier with no credit card required.
 
 ---
@@ -55,9 +57,14 @@ refill, and turning it into a game with friends.
 - **Live water fountains** pulled from OpenStreetMap via the Overpass API.
 - Curated **seed locations** + **partner spots** with perks (e.g., "10% off with a reusable bottle").
 - Color-coded pins: fountain, refill station, eco-store, cafe, partner.
+- **Fountain ratings**: signed-in users can mark a fountain as working or broken, and whether
+  they would drink from it. Everyone sees the totals ("Works · 4 of 5 would drink from it"),
+  never who rated. A fountain whose latest rating says broken turns gray on the map.
 
 ### Community & social
 - **Accounts** (email + password) with cloud sync across devices.
+- **Export my data** (JSON download) and **in-app account deletion** from Profile, which
+  permanently removes the account and everything tied to it.
 - **Friend challenges**: create a challenge, share a join code, others join.
 - **Leaderboards** with live rankings and a team-progress bar.
 - **Web Share** for impact and challenge invites (native share sheet, clipboard fallback).
@@ -78,8 +85,10 @@ refill, and turning it into a game with friends.
   API is unavailable (e.g., offline).
 
 ### Experience & polish
-- **Onboarding**: welcome → a 4-slide guided tour (Log / Track / Map / Rewards, each with a
-  mini preview of the real screen) → profile setup → account step. Replayable from Profile.
+- **Onboarding**: welcome → a short guided tour with mini previews of the real screens →
+  profile setup → account step.
+- **Interactive walkthrough**: after onboarding, a spotlight walkthrough highlights the real
+  controls one at a time (log button, map, challenges, profile). Replayable from Profile.
 - **Dark mode**: light / dark / system, persisted, with no flash on load.
 - Minimal design system: Inter font, single emerald accent, custom line-icon set, soft elevation.
 - Toasts, ripple + haptic feedback, page transitions — all respecting `prefers-reduced-motion`.
@@ -115,10 +124,13 @@ per device in `localStorage`; notifications are generated locally on the device.
 | `bottle_logs` | id, user_id, count, source, created_at |
 | `challenges` | id, name, code (unique), goal, created_by, start/end dates |
 | `challenge_members` | id, challenge_id, user_id, joined_at |
+| `fountain_ratings` | fountain_id, user_id, works, would_drink, updated_at |
 
 - Trigger `handle_new_user` auto-creates a profile on signup (name from signup metadata).
 - Function `get_challenge_leaderboard(p_code)` returns per-member bottle totals for a challenge.
-- Full schema lives in [`supabase/schema.sql`](supabase/schema.sql).
+- Function `fountain_rating_summary(p_ids)` returns per-fountain rating totals (no user ids).
+- Function `delete_my_account()` deletes the signed-in user; everything else cascades.
+- Full schema lives in [`supabase/schema.sql`](../supabase/schema.sql).
 
 ---
 
@@ -144,24 +156,27 @@ bottlezero/
   index.html              app shell + PWA meta + no-flash theme script
   vite.config.js          Vite + Tailwind + React plugins
   vercel.json             SPA rewrite (all routes → index.html)
+  capacitor.config.json   native app config (app id, web dir)
   .env                    Supabase keys (not committed)
   api/impact.py           Python serverless function (impact equivalents)
-  scripts/generate_icons.py  Python (PIL) generator for the PNG app icons
-  scripts/generate_og.py     Python (PIL) generator for the 1200x630 social card
-  public/og.png           social share image (og:image / twitter card)
-  supabase/schema.sql     database schema + RLS + functions
-  public/                 manifest.json, sw.js, icons, favicon
+  supabase/               schema.sql (tables, RLS, functions) + follow-up SQL files
+  android/                Capacitor Android project
+  assets/                 source icon + splash for the native apps
+  scripts/                Python (PIL) icon/image generators, ios-setup.sh
+  public/                 manifest.json, sw.js, icons, favicon, og.png
+  docs/                   these docs, README images
   src/
     main.jsx              providers: Theme → Auth → App data → Toast
     App.jsx               routes (lazy-loaded), top/bottom chrome, onboarding
-    routes/               Dashboard, Map, Rewards, Insights, Challenges,
-                          Learn, Profile, About, Auth
-    components/           BottleButton, StatCard, BadgeCard, MapView, NavBar,
-                          TopBar, Icon, Onboarding, ThemeToggle, Celebrations,
-                          HabitReminders, InstallPrompt, AnimatedNumber, PageHeader
-    state/                AppContext, AuthContext, ThemeContext, ToastContext, ReminderContext
-    lib/                  storage, impact, badges, rewards, overpass, share,
-                          motion, confetti, supabase
+    routes/               Dashboard, Map, Rewards, Insights, Challenges, Learn,
+                          Profile, About, Auth, Privacy, DeleteAccount
+    components/           BottleButton, StatCard, BadgeCard, MapView, FountainRating,
+                          NavBar, TopBar, Icon, Onboarding, TourOverlay, ThemeToggle,
+                          Celebrations, HabitReminders, InstallModal, CommunityImpact, ...
+    state/                AppContext, AuthContext, ThemeContext, ToastContext,
+                          ReminderContext, TourContext
+    lib/                  storage, impact, badges, rewards, streak, ratings, overpass,
+                          share, shareCard, native, pwa, supabase (+ *.test.js)
     data/                 facts.json, seedLocations.json, partners.json
 ```
 
@@ -185,7 +200,8 @@ VITE_SUPABASE_ANON_KEY=<anon public key>
 
 Without these, the app runs in device-only (localStorage) mode — nothing breaks.
 
-**Backend setup (one time):** create a free Supabase project, run `supabase/schema.sql` in the
+**Backend setup (one time):** create a free Supabase project, run `supabase/schema.sql`,
+`community_stats.sql`, `security_hardening.sql`, and `challenge_delete.sql` (in that order) in the
 SQL Editor, turn off "Confirm email" under Authentication → Providers → Email for instant
 signups, then copy the Project URL + anon key into `.env` and into Vercel's environment variables.
 
@@ -221,8 +237,8 @@ partnerships.
 ## 11. Security posture
 
 All tables are protected with Postgres Row Level Security: users can only read and write
-their own rows. Cross-user reads happen exclusively through two deliberately narrow
-`SECURITY DEFINER` functions, both with a pinned `search_path`:
+their own rows. Cross-user reads happen exclusively through a few deliberately narrow
+`SECURITY DEFINER` functions, each with a pinned `search_path`:
 
 - **`community_stats()`** — callable by anyone, including signed-out visitors, on purpose.
   It returns exactly two aggregate numbers (total bottles, total members) and no
@@ -230,11 +246,16 @@ their own rows. Cross-user reads happen exclusively through two deliberately nar
 - **`get_challenge_leaderboard(code)`** — callable by signed-in users only. It verifies
   the caller is a member of the challenge before returning names and totals, and raises
   an exception otherwise.
+- **`fountain_rating_summary(ids)`**: callable by anyone. It returns only per-fountain
+  totals (how many ratings, works/broken, would drink or not, latest status) and never
+  user ids. It accepts at most 500 fountain ids per call.
+- **`delete_my_account()`**: callable by signed-in users only, and it can only delete the
+  caller's own account.
 
 The `handle_new_user()` trigger function is not executable by any API role; only the
 database invokes it. Supabase's security linter intentionally flags every publicly
 callable `SECURITY DEFINER` function so developers confirm the exposure is deliberate —
-for the two functions above, it is, for the reasons stated. Leaked-password protection
+for the functions above, it is, for the reasons stated. Leaked-password protection
 (HaveIBeenPwned checks) is a Supabase Pro feature and is not enabled on the free plan.
 
 Anon keys are public by design (they ship in the client bundle); real protection comes
