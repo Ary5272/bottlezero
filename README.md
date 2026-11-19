@@ -26,7 +26,7 @@ BottleZero helps people cut down on single-use plastic bottles. Every time you r
 
 ## Why I built it
 
-Plastic water bottles are one of the easiest kinds of waste to avoid, but most people don't notice how many they go through. Seeing a running total of bottles you didn't buy, and what that adds up to, makes refilling feel like it actually counts. BottleZero is built to make that one-tap habit easy, and to make it more fun with friends.
+Plastic water bottles are one of the easiest kinds of waste to avoid, but most people don't notice how many they go through. Seeing a running total of bottles you didn't buy, and what that adds up to, makes refilling feel like it actually counts. BottleZero is built to make that one-tap habit easy, and to make it more fun with friends. Also I wanted people to know what impact they were having on the world and pollution is one of the main ways sadly
 
 ## What it does
 
@@ -115,5 +115,4 @@ docs/           detailed docs and images
 - [docs/ANDROID_BUILD.md](docs/ANDROID_BUILD.md): step-by-step Android build
 
 ## License
-
 [MIT](LICENSE)
