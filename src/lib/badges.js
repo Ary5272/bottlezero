@@ -6,19 +6,18 @@ export const BADGES = [
   { key: 'plastic_free', name: 'Plastic Free Hero', description: 'Save 100 bottles', icon: '🏆', type: 'total', threshold: 100 },
   { key: 'earth_champion', name: 'Earth Champion', description: 'Save 250 bottles', icon: '🌍', type: 'total', threshold: 250 },
   { key: 'legend', name: 'Legend', description: 'Save 500 bottles', icon: '⭐', type: 'total', threshold: 500 },
-  { key: 'planet_saver', name: 'Planet Saver', description: 'Save 1000 bottles', icon: '🌐', type: 'total', threshold: 500 },
+  { key: 'planet_saver', name: 'Planet Saver', description: 'Save 1,000 bottles', icon: '🌐', type: 'total', threshold: 1000 },
 
   { key: 'streak_3', name: 'On a Roll', description: '3-day streak', icon: '🔥', type: 'streak', threshold: 3 },
   { key: 'streak_7', name: 'Week Warrior', description: '7-day streak', icon: '💪', type: 'streak', threshold: 7 },
   { key: 'streak_14', name: 'Unstoppable', description: '14-day streak', icon: '⚡', type: 'streak', threshold: 14 },
   { key: 'streak_30', name: 'Monthly Master', description: '30-day streak', icon: '👑', type: 'streak', threshold: 30 },
-  { key: 'streak_30', name: 'Iron Will', description: '60-day streak', icon:'🛡️', type: 'streak', threshold: 60},
+  { key: 'streak_60', name: 'Iron Will', description: '60-day streak', icon: '🛡️', type: 'streak', threshold: 60 },
 
   { key: 'goal_1', name: 'Goal Getter', description: 'Hit your daily goal once', icon: '🎯', type: 'daily_goal', threshold: 1 },
   { key: 'goal_7', name: 'Consistent', description: 'Hit your daily goal 7 times', icon: '📅', type: 'daily_goal', threshold: 7 },
   { key: 'goal_30', name: 'Devoted', description: 'Hit your daily goal 30 times', icon: '🏅', type: 'daily_goal', threshold: 30 },
-  { key: 'goal_100', name: 'Goal Machine', description: 'Hit your daily goal 100 times', icon: '🚀', type: 'daily_goal', threshold: 100},
-  
+  { key: 'goal_100', name: 'Goal Machine', description: 'Hit your daily goal 100 times', icon: '🚀', type: 'daily_goal', threshold: 100 },
 ]
 
 export function checkBadges(totalBottles, currentStreak, daysGoalMet) {

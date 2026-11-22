@@ -36,4 +36,21 @@ describe('checkBadges', () => {
   it('returns every defined badge', () => {
     expect(checkBadges(0, 0, 0)).toHaveLength(BADGES.length)
   })
+
+  it('gives every badge a unique key', () => {
+    expect(new Set(BADGES.map(b => b.key)).size).toBe(BADGES.length)
+  })
+
+  it('keeps thresholds increasing within each badge type', () => {
+    for (const type of new Set(BADGES.map(b => b.type))) {
+      const thresholds = BADGES.filter(b => b.type === type).map(b => b.threshold)
+      expect(thresholds).toEqual([...thresholds].sort((a, b) => a - b))
+      expect(new Set(thresholds).size).toBe(thresholds.length)
+    }
+  })
+
+  it('unlocks the new top-tier badges only at their thresholds', () => {
+    expect(checkBadges(999, 59, 99).filter(b => ['planet_saver', 'streak_60', 'goal_100'].includes(b.key)).every(b => !b.unlocked)).toBe(true)
+    expect(checkBadges(1000, 60, 100).filter(b => ['planet_saver', 'streak_60', 'goal_100'].includes(b.key)).every(b => b.unlocked)).toBe(true)
+  })
 })

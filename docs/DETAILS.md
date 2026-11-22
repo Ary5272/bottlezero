@@ -45,7 +45,7 @@ refill, and turning it into a game with friends.
 - **Animated stats**: bottles saved, day streak, plastic avoided, CO₂ prevented, money saved.
 - **Daily goal** with a progress ring and a "goal reached" celebration.
 - **Points & levels** (Seedling → Sprout → Sapling → Young Tree → Grove → Forest → Guardian).
-- **14 achievement badges** (totals, streaks, daily-goal milestones).
+- **17 achievement badges** (totals, streaks, daily-goal milestones).
 - **Level-up & goal confetti**, plus a "log today" nudge to protect streaks.
 - **Daily reminder**: opt-in notification at a time you choose. It fires while the app is open,
   and nudges you once when you reopen the app past that time without having logged. (Per device.
