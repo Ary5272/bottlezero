@@ -8,11 +8,20 @@ on:
         required: false
         default: "Bug fixes and improvements."
   push:
-    tags: ["v*"]
+    branches: [main]
+    paths:
+      - "src/**"
+      - "public/**"
+      - "android/**"
+      - "index.html"
+      - "package.json"
+      - "package-lock.json"
+      - "capacitor.config.json"
+      - "vite.config.js"
 
 concurrency:
   group: android-release
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
   release:
@@ -38,6 +47,7 @@ jobs:
           cache: gradle
 
       - run: npm ci
+      - run: npm run lint
       - run: npm test
       - run: npm run build
       - run: npx cap sync android
@@ -64,6 +74,7 @@ jobs:
           VERSION_CODE=$((100 + ${{ github.run_number }}))
           echo "Building BottleZero $VERSION_NAME (version code $VERSION_CODE)"
           echo "### BottleZero $VERSION_NAME (version code $VERSION_CODE)" >> "$GITHUB_STEP_SUMMARY"
+          echo "RELEASE_NAME=$VERSION_NAME ($VERSION_CODE)" >> "$GITHUB_ENV"
           chmod +x android/gradlew
           ./android/gradlew -p android bundleRelease -PversionCode=$VERSION_CODE -PversionName=$VERSION_NAME
 
@@ -89,6 +100,7 @@ jobs:
           releaseFiles: android/app/build/outputs/bundle/release/app-release.aab
           track: production
           status: completed
+          releaseName: ${{ env.RELEASE_NAME }}
           whatsNewDirectory: whatsnew
 
       - name: Remove signing files
