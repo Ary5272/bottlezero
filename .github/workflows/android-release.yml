@@ -1,0 +1,96 @@
+name: Android release
+
+on:
+  workflow_dispatch:
+    inputs:
+      notes:
+        description: "What's new in this version (shown on Google Play)"
+        required: false
+        default: "Bug fixes and improvements."
+  push:
+    tags: ["v*"]
+
+concurrency:
+  group: android-release
+  cancel-in-progress: false
+
+jobs:
+  release:
+    name: Build and publish to Google Play
+    runs-on: ubuntu-latest
+    env:
+      VITE_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      VITE_SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+      HAS_KEYSTORE: ${{ secrets.ANDROID_KEYSTORE_BASE64 != '' }}
+      HAS_PLAY: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON != '' }}
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: 21
+          cache: gradle
+
+      - run: npm ci
+      - run: npm test
+      - run: npm run build
+      - run: npx cap sync android
+
+      - name: Set up signing
+        if: env.HAS_KEYSTORE == 'true'
+        env:
+          KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: |
+          printf '%s' "$KEYSTORE_BASE64" | base64 --decode > android/bottlezero-upload.jks
+          {
+            echo "storeFile=bottlezero-upload.jks"
+            echo "storePassword=$KEYSTORE_PASSWORD"
+            echo "keyAlias=$KEY_ALIAS"
+            echo "keyPassword=$KEY_PASSWORD"
+          } > android/keystore.properties
+
+      - name: Build the app bundle
+        run: |
+          VERSION_NAME=$(node -p "require('./package.json').version")
+          VERSION_CODE=$((100 + ${{ github.run_number }}))
+          echo "Building BottleZero $VERSION_NAME (version code $VERSION_CODE)"
+          echo "### BottleZero $VERSION_NAME (version code $VERSION_CODE)" >> "$GITHUB_STEP_SUMMARY"
+          chmod +x android/gradlew
+          ./android/gradlew -p android bundleRelease -PversionCode=$VERSION_CODE -PversionName=$VERSION_NAME
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: bottlezero-aab
+          path: android/app/build/outputs/bundle/release/app-release.aab
+
+      - name: Write release notes
+        if: env.HAS_KEYSTORE == 'true' && env.HAS_PLAY == 'true'
+        env:
+          NOTES: ${{ inputs.notes || 'Bug fixes and improvements.' }}
+        run: |
+          mkdir -p whatsnew
+          printf '%s\n' "$NOTES" > whatsnew/whatsnew-en-US
+
+      - name: Publish to Google Play
+        if: env.HAS_KEYSTORE == 'true' && env.HAS_PLAY == 'true'
+        uses: r0adkll/upload-google-play@v1
+        with:
+          serviceAccountJsonPlainText: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
+          packageName: com.bottlezero.app
+          releaseFiles: android/app/build/outputs/bundle/release/app-release.aab
+          track: production
+          status: completed
+          whatsNewDirectory: whatsnew
+
+      - name: Remove signing files
+        if: always()
+        run: rm -f android/bottlezero-upload.jks android/keystore.properties
